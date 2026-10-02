@@ -15,7 +15,7 @@ PhET 스타일의 고등학교 **화학** 시뮬레이션 웹사이트 (React + 
 ## 파일 구조
 | 무엇 | 위치 |
 |---|---|
-| 시뮬레이션 11개 (1개 = 파일 1개) | `src/simulations/*.jsx` |
+| 시뮬레이션 12개 (1개 = 파일 1개) | `src/simulations/*.jsx` |
 | 공통 부품 (Slider, Select, Segmented, LineChart, ScaleNote, Readout, sci, bisect, wavelengthToRGB, useAnimationFrame) | `src/simulations/common.jsx` |
 | CRC 데이터 + 출처 쪽 번호 (`SOURCES`) | `src/data/crc.js` |
 | 과목·단원·성취기준 52개 원문 | `src/data/curriculum.js` |
@@ -35,6 +35,7 @@ PhET 스타일의 고등학교 **화학** 시뮬레이션 웹사이트 (React + 
 | VaporPressure | 물에 Ⅰ-03, Ⅱ | 12물에01-03, 02-01 | 물 6-5, 유기 용매 6-96~6-100 |
 | Colligative | 물에 Ⅱ | 12물에02-02 | Kb·Kf 15-27/28, 녹는점·끓는점 3-x |
 | DissolutionHeat | 통과2 Ⅰ-2-03, 물에 Ⅲ | 10통과2-01-05, 12물에03-01 | 용해 엔탈피 5-111, 물 비열 6-2 |
+| DynamicEquilibrium (물의 증발·응축, 전용 CSS DynamicEquilibrium.css) | 화학 Ⅲ-1 | 12화학03-01 | 없음 (정성적·상댓값) |
 | Equilibrium (2NO₂⇌N₂O₄, 전용 CSS Equilibrium.css) | 화학 Ⅲ-1·2 | 12화학03-01~04 | 열역학 5-16 |
 | AcidPH | 화학 Ⅳ-1, 반응 Ⅰ-02 | 12화학04-01·02, 12반응01-02 | Kw 5-70, pKa 5-92·5-94~99 |
 | Titration | 통과2 Ⅰ-2-02, 화학 Ⅳ-2, 반응 Ⅰ-03 | 10통과2-01-04, 12화학04-03·04, 12반응01-03 | 지시약 8-84, pKa, Kw |
@@ -51,6 +52,7 @@ PhET 스타일의 고등학교 **화학** 시뮬레이션 웹사이트 (React + 
 
 ## 계산 방식·가정 (수정 요청 시 참고)
 - pH와 적정: 전하 균형식을 이분법으로 풀이 (25 °C, 활동도 = 농도). 강산은 Ka = 1e8로 처리.
+- 동적 평형(증발·응축): 사용자 제공 HTML 디자인 그대로 이식. 분자 220개, 증발 속도는 온도 슬라이더(5단계 상댓값)로, 응축 속도 = 0.24 × 기체 양. 실측값 없음.
 - 평형: 2NO₂ ⇌ N₂O₄ 방향으로 표시 (사용자 제공 equilibrium_sim_only.html 디자인). 분자 충돌·결합 애니메이션, 정반응 속도 상수는 화면용 아레니우스 값, 역반응 속도 상수는 kr = kf/(Kc·C_UNIT)로 정해 평형 조성이 CRC 열역학 Kc(T)와 일치. 해리 방향 Kp(298) = 0.31 → 결합 방향 Kc(298) ≈ 80 L/mol. NO₂ 조각 1개 = 2×10⁻⁴ mol, 부피 배율 1 = 1 L. 분자 속력은 T에 비례하게 과장.
 - 유기 용매 증기압: CRC의 10 kPa, 100 kPa 두 점으로 ln P = A − B/T를 맞춤. 물은 표를 ln P 기준으로 보간.
 - 용해열: 아주 묽은 용액 기준 ΔH, 용액 비열 = 물 비열, 열 손실 없음.

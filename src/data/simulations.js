@@ -9,6 +9,7 @@ import GasProperties from '../simulations/GasProperties.jsx';
 import VaporPressure from '../simulations/VaporPressure.jsx';
 import Colligative from '../simulations/Colligative.jsx';
 import DissolutionHeat from '../simulations/DissolutionHeat.jsx';
+import DynamicEquilibrium from '../simulations/DynamicEquilibrium.jsx';
 import Equilibrium from '../simulations/Equilibrium.jsx';
 import AcidPH from '../simulations/AcidPH.jsx';
 import Titration from '../simulations/Titration.jsx';
@@ -84,6 +85,16 @@ export const simulations = [
     standards: ['10통과2-01-05', '12물에03-01'],
     sources: ['solH', 'waterProps', 'atomicWeights'],
     component: DissolutionHeat,
+  },
+  {
+    id: 'dynamic-equilibrium',
+    title: '가역 반응과 동적 평형',
+    description: '밀폐된 플라스크 속 물이 증발하고 응축하는 모습을 보며, 증발 속도(정반응)와 응축 속도(역반응)가 같아지는 동적 평형을 관찰합니다.',
+    goals: ['가역 반응의 의미를 안다', '정반응 속도와 역반응 속도가 같아지는 동적 평형 상태를 설명한다', '평형 상태에서도 반응이 멈추지 않고 계속됨을 이해한다'],
+    places: ['chem-3-1'],
+    standards: ['12화학03-01'],
+    sources: [],
+    component: DynamicEquilibrium,
   },
   {
     id: 'equilibrium',
