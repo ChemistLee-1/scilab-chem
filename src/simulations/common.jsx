@@ -83,7 +83,8 @@ export function Readout({ rows }) {
 const SUP = { '-': '⁻', 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴', 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹' };
 export function sci(x, digits = 2) {
   if (x === 0) return '0';
-  const e = Math.floor(Math.log10(Math.abs(x)));
+  let e = Math.floor(Math.log10(Math.abs(x)));
+  if (Math.abs(x / 10 ** e).toFixed(digits) >= 10) e += 1; // 9.999 이 10.00 으로 반올림되는 경우 자릿수 올림
   if (e >= -2 && e <= 3) return x.toFixed(Math.max(0, digits - e));
   const m = x / 10 ** e;
   return `${m.toFixed(digits)} × 10${String(e).split('').map((c) => SUP[c]).join('')}`;
