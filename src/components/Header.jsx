@@ -5,7 +5,7 @@ export default function Header() {
     <header className="header">
       <div className="container header-inner">
         <Link to="/" className="logo">
-          <span className="logo-mark">◎</span> SciLab <small>화학</small>
+          <span className="logo-mark">◎</span> chemistLee 실험실
         </Link>
         <nav className="nav">
           <NavLink to="/simulations">시뮬레이션</NavLink>
