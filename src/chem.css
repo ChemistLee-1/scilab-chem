@@ -145,3 +145,25 @@ tr.flash { animation: flash 2s ease; }
   .tree-row { flex-direction: column; }
   .sim-links { justify-content: flex-start; }
 }
+
+/* 측정형 시뮬레이션(보일·샤를 법칙): 그래프 범례, 측정 데이터 표, 입력 칸 */
+.data-legend { margin-top: 8px; display: flex; flex-direction: column; gap: 3px; }
+.data-panel { margin-top: 16px; background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+.data-panel-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+.data-panel-head h3 { margin: 0; }
+.data-panel details { margin-top: 12px; font-size: 14px; }
+.data-panel summary { cursor: pointer; font-weight: 700; }
+.data-panel details ol, .data-panel details ul { margin: 8px 0 0; padding-left: 20px; line-height: 1.6; }
+.data-table-wrap { max-height: 260px; overflow: auto; border: 1px solid var(--border); border-radius: 8px; margin-top: 10px; }
+.data-table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
+.data-table th, .data-table td { padding: 5px 8px; text-align: right; border-bottom: 1px solid #e4e8ef; white-space: nowrap; }
+.data-table th { position: sticky; top: 0; background: #f0f3f8; font-weight: 700; }
+.data-table td:first-child, .data-table th:first-child { text-align: center; }
+.data-table .empty { text-align: center; color: var(--muted); padding: 18px; white-space: normal; }
+.data-table button.del { font-size: 12px; padding: 1px 8px; border: 1px solid var(--border); background: #fff; border-radius: 6px; cursor: pointer; }
+.btn:disabled, .data-table button.del:disabled { opacity: .45; cursor: not-allowed; }
+.data-legend .eq { color: var(--muted); }
+.num-in { width: 6.5em; font: inherit; font-size: 14px; padding: 4px 6px; border: 1px solid var(--border); border-radius: 6px; background: #fff; }
+.num-in.short { width: 4.5em; }
+.inline-fields { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; font-size: 14px; }
+.chart-toggles { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; font-size: 14px; margin-top: 8px; }

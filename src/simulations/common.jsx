@@ -18,11 +18,11 @@ export function useAnimationFrame(callback, running = true) {
   }, [running]);
 }
 
-export function Slider({ label, value, min, max, step = 1, unit = '', format, onChange }) {
+export function Slider({ label, value, min, max, step = 1, unit = '', format, onChange, disabled = false }) {
   return (
     <label className="slider">
       <span>{label} <b>{format ? format(value) : value}{unit}</b></span>
-      <input type="range" min={min} max={max} step={step} value={value}
+      <input type="range" min={min} max={max} step={step} value={value} disabled={disabled}
         onChange={(e) => onChange(Number(e.target.value))} />
     </label>
   );
@@ -93,6 +93,7 @@ export function sci(x, digits = 2) {
 export function LineChart({
   series, xDomain, yDomain, xLabel, yLabel, width = 640, height = 300,
   xTicks = 5, yTicks = 5, markers = [], hLines = [], vLines = [], yFormat = (v) => v, xFormat = (v) => v,
+  xTickValues, // 가로축 눈금 위치를 직접 정할 때 (예: [-273.15, -200, ...])
 }) {
   const pad = { l: 56, r: 16, t: 14, b: 40 };
   const W = width - pad.l - pad.r, H = height - pad.t - pad.b;
@@ -108,7 +109,7 @@ export function LineChart({
           <text x={pad.l - 6} y={sy(t) + 4} textAnchor="end" className="tick">{yFormat(t)}</text>
         </g>
       ))}
-      {ticks(xDomain, xTicks).map((t) => (
+      {(xTickValues ?? ticks(xDomain, xTicks)).map((t) => (
         <g key={`x${t}`}>
           <line y1={pad.t} y2={pad.t + H} x1={sx(t)} x2={sx(t)} className="grid" />
           <text y={pad.t + H + 16} x={sx(t)} textAnchor="middle" className="tick">{xFormat(t)}</text>
@@ -134,7 +135,9 @@ export function LineChart({
           points={s.points.map(([x, y]) => `${sx(x)},${sy(clampY(y))}`).join(' ')} />
       ))}
       {markers.map((m, i) => (
-        <circle key={i} cx={sx(m.x)} cy={sy(clampY(m.y))} r={m.r ?? 5} fill={m.color} stroke="#fff" strokeWidth="1.5" />
+        // hollow: 속이 빈 원 (예: '지금 상태' 표시)
+        <circle key={i} cx={sx(m.x)} cy={sy(clampY(m.y))} r={m.r ?? 5} fill={m.hollow ? 'none' : m.color}
+          stroke={m.hollow ? m.color : '#fff'} strokeWidth={m.hollow ? 2 : 1.5} />
       ))}
       <text x={pad.l + W / 2} y={height - 4} textAnchor="middle" className="axis-label">{xLabel}</text>
       <text transform={`translate(14 ${pad.t + H / 2}) rotate(-90)`} textAnchor="middle" className="axis-label">{yLabel}</text>

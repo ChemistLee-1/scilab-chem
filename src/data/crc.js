@@ -28,6 +28,7 @@ export const SOURCES = {
 export const R = 8.3144621; // J mol⁻¹ K⁻¹
 export const R_LBAR = 0.083144621; // L bar mol⁻¹ K⁻¹
 export const NA = 6.02214129e23; // mol⁻¹
+export const ATM_KPA = 101.325; // 표준 대기압 1 atm (kPa)
 export const EV_TO_KJMOL = 96.4853365; // 1 eV/atom = F/1000 kJ/mol
 
 // ── 1~20번 원소 (원자량 1-11, 이온화 에너지 1-17, 공유 반지름 9-49, 전기음성도 9-97)
