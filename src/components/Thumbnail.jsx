@@ -7,6 +7,7 @@ const ART = {
   'vapor-pressure': <path d="M12 70 C 60 68, 85 50, 110 10" fill="none" stroke="white" strokeWidth="4" />,
   colligative: (<><rect x="50" y="8" width="16" height="56" rx="8" fill="white" opacity="0.4" /><rect x="54" y="30" width="8" height="34" fill="white" /><circle cx="58" cy="68" r="9" fill="white" /></>),
   'dissolution-heat': (<><path d="M35 20 h50 l-6 50 h-38z" fill="white" opacity="0.5" /><path d="M60 8 v12" stroke="white" strokeWidth="3" /><text x="60" y="55" fill="white" fontSize="16" textAnchor="middle">ΔH</text></>),
+  'dynamic-equilibrium': (<><circle cx="60" cy="44" r="28" fill="none" stroke="white" strokeWidth="3" /><path d="M32 52 h56" stroke="white" strokeWidth="2" /><path d="M48 46 v-14 l-4 5 M48 32 l4 5" stroke="white" strokeWidth="2" fill="none" /><path d="M72 30 v14 l-4 -5 M72 44 l4 -5" stroke="white" strokeWidth="2" fill="none" /><rect x="52" y="6" width="16" height="10" rx="2" fill="white" /></>),
   equilibrium: <text x="60" y="48" fill="white" fontSize="26" textAnchor="middle">⇌</text>,
   'acid-ph': <text x="60" y="50" fill="white" fontSize="26" fontWeight="700" textAnchor="middle">pH</text>,
   titration: (<><rect x="56" y="4" width="8" height="40" fill="white" /><path d="M42 50 h36 l12 22 h-60z" fill="white" opacity="0.7" /></>),

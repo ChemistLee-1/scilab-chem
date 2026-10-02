@@ -34,6 +34,8 @@ export default function SimulationPage() {
           <h3>데이터 출처</h3>
           <ul className="small">
             {sim.sources.map((k) => <li key={k}>CRC Handbook of Chemistry and Physics, 95th Ed. — {SOURCES[k]}</li>)}
+            {/* 실제 측정값을 쓰지 않는 시뮬레이션일 때 */}
+            {sim.sources.length === 0 && <li>실측 데이터를 쓰지 않는 정성적 시뮬레이션 (값은 상댓값)</li>}
           </ul>
         </div>
       </div>
