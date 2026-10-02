@@ -1,0 +1,141 @@
+/* ---------- 화학 버전 스타일 ---------- */
+.logo small { font-size: 13px; font-weight: 600; opacity: .75; margin-left: 4px; }
+.hero-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.btn-light { background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.5); }
+.subject-tile { display: flex; flex-direction: column; gap: 4px; }
+.subject-tile small { font-size: 12px; font-weight: 500; opacity: .85; }
+.dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; vertical-align: middle; }
+.note { margin-top: 18px; }
+
+/* 단원 트리 */
+.tree-head { border-left: 6px solid; padding-left: 12px; margin-bottom: 18px; }
+.tree-head h2 { margin-bottom: 2px; }
+.tree-unit { background: var(--surface); border-radius: 12px; padding: 16px 18px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+.tree-unit h3 { display: flex; align-items: center; gap: 10px; font-size: 18px; }
+.roman { color: #fff; border-radius: 6px; padding: 2px 9px; font-size: 14px; }
+.tree-parent { font-weight: 700; color: var(--muted); font-size: 14px; margin: 12px 0 2px; }
+.tree-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 9px 0; border-top: 1px dashed var(--border); }
+.tree-row.unit-level { border-top: 0; }
+.sec-no { color: var(--primary); margin-right: 4px; }
+.subs { display: block; font-size: 12px; color: var(--muted); margin-top: 2px; }
+.sim-links { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+.sim-link { background: #eaf2ff; color: #1d4f9c; border-radius: 999px; padding: 3px 10px; font-size: 13px; font-weight: 600; white-space: nowrap; }
+.sim-link:hover { background: #d4e5ff; }
+.pending { color: #a0a8b5; font-size: 13px; white-space: nowrap; }
+
+/* 성취기준 */
+.toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 16px 0 24px; }
+.std-course h2 { border-left: 6px solid; padding-left: 10px; margin-top: 28px; }
+.std-course h2 small { font-size: 14px; color: var(--muted); font-weight: 400; }
+.std-unit h3 { font-size: 16px; margin: 18px 0 8px; }
+.std-table { width: 100%; border-collapse: collapse; background: var(--surface); border-radius: 10px; overflow: hidden; font-size: 14px; }
+.std-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.55; }
+.std-code { white-space: nowrap; font-weight: 700; color: var(--primary); }
+.std-sims { width: 220px; }
+.std-sims .sim-link { display: inline-block; margin: 0 4px 4px 0; }
+tr.flash { animation: flash 2s ease; }
+@keyframes flash { 0%, 40% { background: #fff6c8; } 100% { background: transparent; } }
+.std-list li { margin-bottom: 8px; line-height: 1.55; }
+.sim-info ul { padding-left: 18px; line-height: 1.6; }
+
+/* 공통 컨트롤 */
+.select { display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
+.select select, .num-input { padding: 7px 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; background: #fff; }
+.num-input { width: 110px; }
+.segmented { display: flex; flex-wrap: wrap; background: #e3e8f0; border-radius: 8px; padding: 3px; gap: 2px; }
+.segmented button { flex: 1; border: 0; background: transparent; padding: 7px 10px; border-radius: 6px; font-size: 13px; cursor: pointer; font-weight: 600; color: #4a5565; white-space: nowrap; }
+.segmented button.on { background: #fff; color: var(--primary); box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { border: 1px solid var(--border); background: #fff; border-radius: 999px; padding: 5px 11px; font-size: 13px; cursor: pointer; }
+.chip.on { background: var(--primary); color: #fff; border-color: var(--primary); }
+.btn-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.btn-row .btn { padding: 8px 12px; font-size: 13px; }
+.readout-row { display: flex; justify-content: space-between; gap: 10px; border-bottom: 1px dashed #e4e8ef; padding: 2px 0; }
+.readout-row:last-child { border-bottom: 0; }
+.readout-row b { text-align: right; }
+.subpanel { background: #fff; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+.feedback { border-radius: 8px; padding: 10px; font-size: 14px; background: #fff; }
+.feedback.ok { background: #e6f7ec; color: #1e7b43; }
+.feedback.no { background: #fdeaea; color: #a33; }
+.scale-note { margin-top: 14px; background: #fffbea; border: 1px solid #f3e3a1; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #6b5b1f; }
+.scale-note ul { margin: 6px 0 0; padding-left: 18px; line-height: 1.6; }
+.center { text-align: center; }
+.sim-canvas > svg, .sim-canvas canvas { width: 100%; height: auto; display: block; }
+.chart { width: 100%; height: auto; display: block; margin-top: 10px; background: #fff; }
+.chart .grid { stroke: #eef1f5; }
+.chart .axis { stroke: #8892a0; }
+.tick { font-size: 11px; fill: #5c6675; }
+.axis-label { font-size: 12px; fill: #333; font-weight: 600; }
+.legend { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; }
+.dot.red { background: #eb5757; }
+.dot.blue { background: #2f80ed; }
+.dot.gray { background: #aaa; }
+
+/* 스펙트럼 */
+.spec-view { background: #fff; padding: 8px 0; }
+.spec-row { display: grid; grid-template-columns: 110px 1fr; align-items: center; gap: 8px; margin-bottom: 6px; }
+.spec-label { font-size: 13px; text-align: right; font-weight: 600; }
+.spec-strip { width: 100%; height: 54px; display: block; border-radius: 4px; }
+.axis-strip { height: 18px; }
+
+/* 주기율표 */
+.ptable { width: 100%; height: auto; }
+.pcell { fill: #f7f9fc; stroke: #dde3ec; }
+.pcell.on { stroke: var(--accent); stroke-width: 3; }
+.psym { font-size: 18px; font-weight: 700; fill: #1f2933; pointer-events: none; }
+.pz { font-size: 10px; fill: #8892a0; pointer-events: none; }
+
+/* 결합 */
+.atom-sym { font-size: 22px; font-weight: 800; fill: #1f2933; }
+.charge { font-size: 18px; font-weight: 700; fill: #9b51e0; }
+
+/* 증기압 */
+.flasks { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.flask { background: #fff; border-radius: 8px; padding: 4px; text-align: center; }
+.flask-label { display: flex; justify-content: center; gap: 6px; font-size: 13px; }
+.flask-label .boil { color: #d35400; font-weight: 700; }
+.bubble { animation: rise 1.2s infinite ease-in; }
+@keyframes rise { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-30px); opacity: 0; } }
+
+/* 총괄성, 열량계, pH */
+.colli-row { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; align-items: end; background: #fff; border-radius: 8px; padding: 8px; }
+.beaker { width: 100%; height: auto; }
+.thermo { width: 100%; max-height: 220px; }
+.calorimeter { background: #fff; border-radius: 8px; }
+.big-label { font-size: 26px; font-weight: 800; fill: #333; }
+.ph-top { display: grid; grid-template-columns: 1.4fr 1fr; gap: 12px; align-items: center; background: #fff; border-radius: 8px; padding: 8px; }
+.ph-meter { text-align: center; }
+.ph-value { font-size: 44px; font-weight: 800; color: var(--primary); }
+.ph-scale { position: relative; height: 14px; border-radius: 7px; margin: 10px 0; background: linear-gradient(90deg, #d7263d, #f39c12, #f1c40f, #27ae60, #2e86de, #5b2c83); }
+.ph-needle { position: absolute; top: -5px; width: 4px; height: 24px; background: #222; transform: translateX(-2px); border-radius: 2px; }
+.logbars { width: 100%; height: auto; background: #fff; margin-top: 10px; border-radius: 8px; }
+
+/* 적정 */
+.titr-top { display: grid; grid-template-columns: 0.75fr 1.25fr; gap: 10px; align-items: start; background: #fff; border-radius: 8px; }
+.titr-app { width: 100%; height: auto; max-width: 260px; margin: 0 auto; display: block; }
+.drip { animation: drip .6s infinite linear; }
+@keyframes drip { from { transform: translateY(-10px); opacity: 1; } to { transform: translateY(20px); opacity: 0; } }
+
+/* 전지 */
+.cell-view { background: #fff; border-radius: 8px; }
+.volt { font-family: Consolas, monospace; font-size: 20px; font-weight: 700; }
+.pole { font-size: 13px; font-weight: 700; fill: #333; }
+.series { display: flex; flex-direction: column; gap: 2px; }
+.series-row { display: grid; grid-template-columns: 72px 1fr 52px; align-items: center; gap: 6px; font-size: 12px; padding: 1px 4px; border-radius: 4px; }
+.series-row.on { background: #fff4d6; }
+.series-row b { text-align: right; font-weight: 600; }
+.series-bar { position: relative; height: 6px; background: linear-gradient(90deg, #2f80ed, #eee, #eb5757); border-radius: 3px; }
+.series-bar div { position: absolute; top: -3px; width: 4px; height: 12px; background: #222; border-radius: 2px; }
+
+/* 평형 */
+.eq-eqn { background: #fff; border-radius: 8px; padding: 10px; font-weight: 700; text-align: center; }
+
+.sim-layout { grid-template-columns: minmax(0, 1fr) 300px; }
+.sim-canvas, .sim-controls, .list-layout > section { min-width: 0; }
+@media (max-width: 960px) {
+  .sim-layout, .titr-top, .ph-top, .colli-row { grid-template-columns: 1fr; }
+  .flasks { grid-template-columns: repeat(2, 1fr); }
+  .std-sims { width: auto; }
+  .tree-row { flex-direction: column; }
+  .sim-links { justify-content: flex-start; }
+}
