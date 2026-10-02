@@ -1,64 +1,41 @@
-# chemistLee 실험실 (화학 시뮬레이션) — 프로젝트 정리
+# chemistLee 실험실 (화학 시뮬레이션)
 
-PhET 스타일의 고등학교 **화학** 시뮬레이션 웹사이트 (React + Vite + React Router, 외부 차트 라이브러리 없음).
-다른 과목(물리·생물·지구과학·수학)은 사용자 요청으로 제외함. 나중에 추가할 수 있음.
+PhET 스타일의 고등학교 **화학** 시뮬레이션 웹사이트. React + Vite + React Router, 외부 차트 라이브러리 없음.
+GitHub `ChemistLee-1/scilab-chem`(공개) → Vercel 자동 배포. 사용자는 한국어로 소통하는 화학 교사.
 
-실행: `npm run dev` → http://localhost:5173 · 빌드: `npx vite build`
+실행: `npm.cmd run dev` (PowerShell) · 빌드: `npx vite build`
 
-## 핵심 원칙 (사용자 요구사항)
-1. 화학 우선. 다른 과목은 나중에.
-2. 모든 수치는 `CRC Handbook of Chemistry and Physics 2014.pdf`(95판) 실측값. 화면에 그대로 그릴 수 없으면 비율을 적용하고, 시뮬레이션 아래 **화면 축척**(`ScaleNote`) 상자에 비율과 가정을 적는다.
-3. 교과서 단원(`통합과학 교과서/`, `화학 교과서/`)에 따라 분류.
-4. `[별책9] 과학과 교육과정.pdf`(2022 개정) 성취기준에 따라 분류.
-5. 시뮬레이션마다 파일 1개 → 사용자가 검토한 뒤 시뮬레이션별로 수정 요청 예정.
+## 핵심 원칙
+1. 화학만 다룬다. 다른 과목은 나중에.
+2. 모든 수치는 CRC Handbook 95판(2014) 실측값. 화면에 그대로 그릴 수 없으면 비율을 적용하고, 시뮬레이션 아래 `ScaleNote`(화면 축척) 상자에 비율과 가정을 적는다.
+3. 교과서 단원과 2022 개정 교육과정 성취기준에 따라 분류한다.
+4. 시뮬레이션 1개 = 파일 1개 (`src/simulations/*.jsx`).
+
+## 작업 규칙 (버전 관리)
+1. `main`은 실제 사이트. 직접 수정하지 않는다.
+2. 요청마다 브랜치(`feat/…`, `fix/…`, `docs/…`)에서 작업 → 빌드·브라우저로 확인 → 커밋·push → PR 생성 → PR에 달린 Vercel 미리보기 주소를 사용자에게 전달.
+3. 사용자가 **"반영해"** 하면 `gh pr merge --squash --delete-branch` → 로컬 `main` 동기화 → Production 배포 성공 확인.
+4. 커밋 작성자는 `ChemistLee-1 <188952540+ChemistLee-1@users.noreply.github.com>`(저장소 로컬 설정). 실제 이메일은 쓰지 않는다.
+5. `AGENTS.md`는 사용자가 결정할 때까지 커밋하지 않는다. PDF·교과서는 `.gitignore`로 제외(저작권).
+6. 시뮬레이션을 고치면 해당 `docs/simulations/<파일명>.md`의 내용과 수정 이력도 함께 갱신한다.
 
 ## 파일 구조
 | 무엇 | 위치 |
 |---|---|
-| 시뮬레이션 11개 (1개 = 파일 1개) | `src/simulations/*.jsx` |
+| 시뮬레이션 | `src/simulations/*.jsx` (평형만 전용 CSS `Equilibrium.css`) |
 | 공통 부품 (Slider, Select, Segmented, LineChart, ScaleNote, Readout, sci, bisect, wavelengthToRGB, useAnimationFrame) | `src/simulations/common.jsx` |
-| CRC 데이터 + 출처 쪽 번호 (`SOURCES`) | `src/data/crc.js` |
+| CRC 데이터 + 출처 쪽 번호 | `src/data/crc.js` |
 | 과목·단원·성취기준 52개 원문 | `src/data/curriculum.js` |
-| 시뮬레이션 목록 (제목, 목표, places=단원 id, standards, sources, component) | `src/data/simulations.js` |
-| 페이지: 홈 / 단원별 목록 / 성취기준 / 상세 / 자료 출처 | `src/pages/` |
-| 스타일 (기본 / 화학용) | `src/index.css`, `src/chem.css` |
+| 시뮬레이션 목록 (제목, 목표, 단원, 성취기준, 출처) | `src/data/simulations.js` |
+| 페이지 / 스타일 | `src/pages/`, `src/index.css`, `src/chem.css` |
 
-새 시뮬레이션 추가: `src/simulations/X.jsx` 작성 → `simulations.js`에 등록 → 목록·단원·성취기준 페이지에 자동 반영. 썸네일 그림은 `src/components/Thumbnail.jsx`의 `ART`에 추가.
+새 시뮬레이션: `src/simulations/X.jsx` 작성 → `simulations.js`에 등록 → 썸네일은 `src/components/Thumbnail.jsx`의 `ART` → `docs/simulations/X.md` 작성.
 
-## 시뮬레이션 ↔ 단원 ↔ 성취기준 ↔ CRC 데이터
-| 파일 | 단원 | 성취기준 | CRC (쪽) |
-|---|---|---|---|
-| Spectrum | 통과1 Ⅱ-1-01 | 10통과1-02-01 | Line Spectra (10-1~) |
-| PeriodicTrends | 통과1 Ⅱ-2-01, 화학 Ⅱ-1 | 10통과1-02-03, 12화학02-02 | 원자량 1-11, 이온화E 1-17, 반지름 9-49, 전기음성도 9-97 |
-| BondPolarity | 통과1 Ⅱ-2-02, 화학 Ⅱ-1 | 10통과1-02-04, 12화학02-02 | 9-97, 9-49 |
-| GasProperties | 물에 Ⅰ-01·02 | 12물에01-01, 01-02 | R 1-2, vdW 6-56 |
-| VaporPressure | 물에 Ⅰ-03, Ⅱ | 12물에01-03, 02-01 | 물 6-5, 유기 용매 6-96~6-100 |
-| Colligative | 물에 Ⅱ | 12물에02-02 | Kb·Kf 15-27/28, 녹는점·끓는점 3-x |
-| DissolutionHeat | 통과2 Ⅰ-2-03, 물에 Ⅲ | 10통과2-01-05, 12물에03-01 | 용해 엔탈피 5-111, 물 비열 6-2 |
-| Equilibrium (2NO₂⇌N₂O₄, 전용 CSS Equilibrium.css) | 화학 Ⅲ-1·2 | 12화학03-01~04 | 열역학 5-16 |
-| AcidPH | 화학 Ⅳ-1, 반응 Ⅰ-02 | 12화학04-01·02, 12반응01-02 | Kw 5-70, pKa 5-92·5-94~99 |
-| Titration | 통과2 Ⅰ-2-02, 화학 Ⅳ-2, 반응 Ⅰ-03 | 10통과2-01-04, 12화학04-03·04, 12반응01-03 | 지시약 8-84, pKa, Kw |
-| GalvanicCell | 통과2 Ⅰ-2-01, 반응 Ⅱ-01~03 | 10통과2-01-03, 12반응02-01·03 | 표준 환원 전위 5-80 |
+## 필요할 때만 읽을 문서
+| 언제 | 문서 |
+|---|---|
+| 특정 시뮬레이션을 고칠 때 | `docs/simulations/<파일명>.md` — 단원, 성취기준, CRC 데이터, 계산 방식, 검증값, 수정 이력 |
+| CRC에서 새 데이터를 찾을 때 | `docs/data-sources.md` |
+| 단원·성취기준 분류를 바꾸거나 새 시뮬레이션을 배치할 때 | `docs/curriculum.md` |
 
-성취기준 52개 중 25개 연결, 나머지는 "준비 중"으로 표시.
-다음 후보: 몰과 양적 관계, VSEPR 분자 구조, 반응 속도, 헤스 법칙, 완충 작용.
-
-## 교과서 단원 기준과 한계
-- 화학: 천재(임희준) 교과서 차례 (소단원까지 확인).
-- 통합과학1·2, 물질과 에너지 Ⅰ, 화학 반응의 세계 Ⅰ·Ⅱ: 동아출판 차례.
-- 물질과 에너지 Ⅱ~Ⅳ, 화학 반응의 세계 Ⅲ: 중단원을 확인하지 못해 대단원 단위로 분류.
-- 동아·비상 PDF 본문 대부분은 글꼴 인코딩 때문에 텍스트 추출이 안 됨. 통합과학 텍스트 일부는 `통합과학 교과서/작업자료/*.json`에 이미 추출되어 있음.
-
-## 계산 방식·가정 (수정 요청 시 참고)
-- pH와 적정: 전하 균형식을 이분법으로 풀이 (25 °C, 활동도 = 농도). 강산은 Ka = 1e8로 처리.
-- 평형: 2NO₂ ⇌ N₂O₄ 방향으로 표시 (사용자 제공 equilibrium_sim_only.html 디자인). 분자 충돌·결합 애니메이션, 정반응 속도 상수는 화면용 아레니우스 값, 역반응 속도 상수는 kr = kf/(Kc·C_UNIT)로 정해 평형 조성이 CRC 열역학 Kc(T)와 일치. 해리 방향 Kp(298) = 0.31 → 결합 방향 Kc(298) ≈ 80 L/mol. NO₂ 조각 1개 = 2×10⁻⁴ mol, 부피 배율 1 = 1 L. 분자 속력은 T에 비례하게 과장.
-- 유기 용매 증기압: CRC의 10 kPa, 100 kPa 두 점으로 ln P = A − B/T를 맞춤. 물은 표를 ln P 기준으로 보간.
-- 용해열: 아주 묽은 용액 기준 ΔH, 용액 비열 = 물 비열, 열 손실 없음.
-- 애니메이션 속도(평형 도달, 적정 유속, 온도 변화, 전자 이동)는 화면용이며 실제 속도가 아님.
-
-## 검증된 값 (회귀 확인용)
-0.1 M 아세트산 pH 2.88 · 아세트산 적정 중화점 pH 8.73 · 에탄올 bp 78.3 °C (CRC 78.24) · 아세톤 56.1 · 에테르 34.5 · N₂ 평균 속력(300 K) 517 m/s · Zn–Cu 전지 1.104 V
-
-## 작업 환경 메모
-- Windows에서 Bash heredoc에 따옴표가 섞이면 실패한 적이 있음 → 파일 작성은 Write 도구 사용.
-- PDF 텍스트 추출: `pdftotext -enc UTF-8 -table` (CRC 표는 `-table` 모드가 행 정렬이 정확함).
+시뮬레이션 문서: Spectrum, PeriodicTrends, BondPolarity, GasProperties, VaporPressure, Colligative, DissolutionHeat, Equilibrium, AcidPH, Titration, GalvanicCell
