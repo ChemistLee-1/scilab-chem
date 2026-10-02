@@ -37,6 +37,10 @@ main { flex: 1; }
 .hero { background: linear-gradient(135deg, #1d3c6e, #2f80ed); color: #fff; padding: 72px 0; text-align: center; }
 .hero h1 { font-size: clamp(28px, 5vw, 44px); }
 .hero p { opacity: .9; line-height: 1.7; margin-bottom: 28px; }
+/* 메인 화면 첫 부분: 소개 두 줄, 큰 표어, 우리말 표어 */
+.hero .hero-lede { font-size: clamp(15px, 2vw, 18px); margin: 0 0 22px; word-break: keep-all; } /* 한글 낱말 중간에서 줄이 끊기지 않게 */
+.hero .hero-title { font-size: clamp(34px, 6.5vw, 60px); letter-spacing: -0.01em; line-height: 1.1; margin: 0; }
+.hero .hero-sub { font-size: clamp(16px, 2.4vw, 21px); font-weight: 600; opacity: 1; margin: 12px 0 30px; }
 
 /* Buttons */
 .btn { display: inline-block; background: var(--accent); color: #fff; border: 0; border-radius: 8px; padding: 10px 18px; font-weight: 700; font-size: 15px; cursor: pointer; }

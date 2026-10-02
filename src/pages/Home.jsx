@@ -8,9 +8,11 @@ export default function Home() {
     <>
       <section className="hero">
         <div className="container">
-          <h1>실제 데이터로 탐구하는 화학</h1>
-          <p>CRC Handbook 의 실측 데이터를 바탕으로 만든 화학 시뮬레이션입니다.<br />
-            교과서 단원과 2022 개정 교육과정 성취기준에 따라 찾아볼 수 있습니다.</p>
+          {/* 소개 두 줄 → 큰 표어(영문) → 우리말 표어 순서 */}
+          <p className="hero-lede">화학 현상의 이면에는 언제나 입자의 움직임이 있습니다<br />
+            시뮬레이션은 그 보이지 않는 이야기를 상상하게 돕는 도구입니다</p>
+          <h1 className="hero-title">Invisible, Imaginable.</h1>
+          <p className="hero-sub">보이지 않지만, 상상할 수 있습니다</p>
           <div className="hero-actions">
             <Link to="/simulations" className="btn">단원별로 찾기 →</Link>
             <Link to="/standards" className="btn btn-light">성취기준별로 찾기</Link>
