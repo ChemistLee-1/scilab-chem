@@ -6,6 +6,8 @@ import Spectrum from '../simulations/Spectrum.jsx';
 import PeriodicTrends from '../simulations/PeriodicTrends.jsx';
 import BondPolarity from '../simulations/BondPolarity.jsx';
 import GasProperties from '../simulations/GasProperties.jsx';
+import BoyleLaw from '../simulations/BoyleLaw.jsx';
+import CharlesLaw from '../simulations/CharlesLaw.jsx';
 import VaporPressure from '../simulations/VaporPressure.jsx';
 import Colligative from '../simulations/Colligative.jsx';
 import DissolutionHeat from '../simulations/DissolutionHeat.jsx';
@@ -55,6 +57,26 @@ export const simulations = [
     standards: ['12물에01-01', '12물에01-02'],
     sources: ['constants', 'atomicWeights', 'vdw'],
     component: GasProperties,
+  },
+  {
+    id: 'boyle-law',
+    title: '보일 법칙: 압력과 부피',
+    description: '온도와 기체의 양을 일정하게 두고 피스톤에 가하는 압력을 바꾸며 부피를 측정합니다. 측정값을 그래프로 비교하고 CSV 파일로 내려받아 분석할 수 있습니다.',
+    goals: ['온도와 몰수가 일정할 때 압력과 부피가 반비례함을 안다', 'V–1/P 그래프가 직선이 되고 P×V 가 일정함을 데이터로 확인한다', '온도·몰수를 바꾼 측정 결과를 비교해 PV = nRT 와 연결한다'],
+    places: ['matter-1-01'],
+    standards: ['12물에01-01'],
+    sources: ['constants'],
+    component: BoyleLaw,
+  },
+  {
+    id: 'charles-law',
+    title: '샤를 법칙: 온도와 부피',
+    description: '압력과 기체의 양을 일정하게 두고 온도를 바꾸며 부피를 측정합니다. 추세선을 연장해 부피가 0 이 되는 온도(절대 영도)를 찾고, 측정값은 CSV, 그래프는 이미지로 내려받을 수 있습니다.',
+    goals: ['압력과 몰수가 일정할 때 기체의 부피가 절대 온도에 비례함을 안다', 'V–t 그래프를 연장해 절대 영도(−273.15 °C)를 추론한다', '기체 종류와 관계없이 이상 기체의 부피가 같음을 설명한다'],
+    places: ['matter-1-01'],
+    standards: ['12물에01-01'],
+    sources: ['constants', 'atomicWeights'],
+    component: CharlesLaw,
   },
   {
     id: 'vapor-pressure',
