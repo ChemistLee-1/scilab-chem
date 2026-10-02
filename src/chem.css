@@ -1,5 +1,11 @@
 /* ---------- 화학 버전 스타일 ---------- */
-.logo small { font-size: 13px; font-weight: 600; opacity: .75; margin-left: 4px; }
+.logo { white-space: nowrap; }
+.nav a { white-space: nowrap; }
+@media (max-width: 560px) {
+  .header-inner { height: auto; flex-wrap: wrap; gap: 6px 16px; padding-top: 10px; padding-bottom: 10px; }
+  .logo { font-size: 19px; }
+  .nav { gap: 16px; font-size: 14px; }
+}
 .hero-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
 .btn-light { background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.5); }
 .subject-tile { display: flex; flex-direction: column; gap: 4px; }
