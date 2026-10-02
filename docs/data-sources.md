@@ -25,7 +25,7 @@
 | Dissociation Constants of Inorganic / Organic Acids | 5-92 / 5-94~5-99 | pKa |
 | Enthalpy of Solution of Electrolytes | 5-111 | 용해 엔탈피 (무한 희석) |
 | Thermophysical Properties of Water and Steam | 6-2 | 물 비열 4.1806 J/g·K (300 K) |
-| Vapor Pressure and Other Saturation Properties of Water | 6-5 | 물 증기압 |
+| Vapor Pressure and Other Saturation Properties of Water | 6-5 | 물 증기압 (증기 압력, 동적 평형) |
 | Van der Waals Constants for Gases | 6-56 | a, b |
 | Vapor Pressure | 6-88~6-100 | 유기 용매 (10 kPa, 100 kPa 온도) |
 | Physical Constants of Organic Compounds | 3-4~3-246 | 용매 녹는점·끓는점 |

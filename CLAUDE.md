@@ -22,7 +22,7 @@ GitHub `ChemistLee-1/scilab-chem`(공개) → Vercel 자동 배포. 사용자는
 ## 파일 구조
 | 무엇 | 위치 |
 |---|---|
-| 시뮬레이션 | `src/simulations/*.jsx` (평형만 전용 CSS `Equilibrium.css`) |
+| 시뮬레이션 12개 | `src/simulations/*.jsx` (평형만 전용 CSS `Equilibrium.css`) |
 | 공통 부품 (Slider, Select, Segmented, LineChart, ScaleNote, Readout, sci, bisect, wavelengthToRGB, useAnimationFrame) | `src/simulations/common.jsx` |
 | CRC 데이터 + 출처 쪽 번호 | `src/data/crc.js` |
 | 과목·단원·성취기준 52개 원문 | `src/data/curriculum.js` |
@@ -38,4 +38,4 @@ GitHub `ChemistLee-1/scilab-chem`(공개) → Vercel 자동 배포. 사용자는
 | CRC에서 새 데이터를 찾을 때 | `docs/data-sources.md` |
 | 단원·성취기준 분류를 바꾸거나 새 시뮬레이션을 배치할 때 | `docs/curriculum.md` |
 
-시뮬레이션 문서: Spectrum, PeriodicTrends, BondPolarity, GasProperties, VaporPressure, Colligative, DissolutionHeat, Equilibrium, AcidPH, Titration, GalvanicCell
+시뮬레이션 문서: Spectrum, PeriodicTrends, BondPolarity, GasProperties, VaporPressure, Colligative, DissolutionHeat, DynamicEquilibrium, Equilibrium, AcidPH, Titration, GalvanicCell
