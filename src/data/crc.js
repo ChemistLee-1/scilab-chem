@@ -16,7 +16,9 @@ export const SOURCES = {
   waterVP: 'Vapor Pressure and Other Saturation Properties of Water (6-5)',
   vdw: 'Van der Waals Constants for Gases (6-56)',
   vp: 'Vapor Pressure (6-88~6-100)',
-  organic: 'Physical Constants of Organic Compounds (3-4~3-246)',
+  organic: 'Physical Constants of Organic Compounds (3-4~3-282)',
+  inorganic: 'Physical Constants of Inorganic Compounds (4-62, 4-89)',
+  solOrg: 'Aqueous Solubility and Henry’s Law Constants of Organic Compounds (5-172)',
   indicators: 'Indicators for Acids and Bases (8-84)',
   radii: 'Atomic Radii of the Elements (9-49~9-50)',
   en: 'Electronegativity (9-97)',
@@ -180,6 +182,16 @@ export const REDUCTION_POTENTIALS = [
   { sym: 'Cu', ko: '구리', ion: 'Cu²⁺', n: 2, E: 0.3419 },
   { sym: 'Ag', ko: '은', ion: 'Ag⁺', n: 1, E: 0.7996 },
   { sym: 'Au', ko: '금', ion: 'Au³⁺', n: 3, E: 1.498 },
+];
+
+// ── 몰 농도 용액 만들기: 고체 용질
+// density: 고체 밀도 (g/cm³), sol: 25 °C 물 100 g 에 녹는 최대 질량 (g, 수화물은 결정수를 뺀 무수물 기준)
+// NaCl 4-89, CuSO4·5H2O 4-62, α-D-포도당 밀도 3-282 (18 °C)
+// 포도당 용해도 5-172: 15 °C 45.0 %, 30 °C 54.6 % (질량 백분율) → 25 °C 보간 51.4 % = 물 100 g 에 106 g
+export const SOLUTES = [
+  { id: 'NaCl', ko: '염화 나트륨', formula: 'NaCl', label: 'NaCl', hydrate: 0, density: 2.17, sol: 36.0 },
+  { id: 'CuSO4', ko: '황산 구리(Ⅱ) 오수화물', formula: 'CuSO4', label: 'CuSO₄·5H₂O', hydrate: 5, density: 2.286, sol: 22.0 },
+  { id: 'glucose', ko: '포도당', formula: 'C6H12O6', label: 'C₆H₁₂O₆', hydrate: 0, density: 1.562, sol: 106 },
 ];
 
 // 선형 보간

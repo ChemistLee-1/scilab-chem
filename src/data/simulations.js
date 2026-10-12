@@ -13,6 +13,7 @@ import Colligative from '../simulations/Colligative.jsx';
 import DissolutionHeat from '../simulations/DissolutionHeat.jsx';
 import DynamicEquilibrium from '../simulations/DynamicEquilibrium.jsx';
 import Equilibrium from '../simulations/Equilibrium.jsx';
+import Molarity from '../simulations/Molarity.jsx';
 import AcidPH from '../simulations/AcidPH.jsx';
 import Titration from '../simulations/Titration.jsx';
 import GalvanicCell from '../simulations/GalvanicCell.jsx';
@@ -127,6 +128,16 @@ export const simulations = [
     standards: ['12화학03-02', '12화학03-03', '12화학03-04'],
     sources: ['thermo', 'constants'],
     component: Equilibrium,
+  },
+  {
+    id: 'molarity',
+    title: '부피 플라스크로 몰 농도 용액 만들기',
+    description: '전자저울로 용질을 달고, 비커에서 녹여 부피 플라스크로 옮긴 뒤 표선을 맞춰 원하는 몰 농도의 용액을 직접 만들어 봅니다.',
+    goals: ['몰 농도의 의미를 이해한다', '필요한 용질의 양(mol)을 질량으로 환산한다', '부피 플라스크로 정해진 몰 농도의 용액을 만드는 과정을 수행한다', '실험 과정의 실수가 농도에 주는 영향을 설명한다'],
+    places: ['chem-4-1', 'chem-1-2'],
+    standards: ['12화학04-02', '12화학01-02'],
+    sources: ['atomicWeights', 'constants', 'inorganic', 'organic', 'solOrg'],
+    component: Molarity,
   },
   {
     id: 'acid-ph',
