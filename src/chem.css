@@ -167,3 +167,21 @@ tr.flash { animation: flash 2s ease; }
 .num-in.short { width: 4.5em; }
 .inline-fields { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; font-size: 14px; }
 .chart-toggles { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; font-size: 14px; margin-top: 8px; }
+
+/* 몰 농도 용액 만들기: 실험대와 기구 */
+.mol-bench { width: 100%; height: auto; display: block; background: linear-gradient(#f7f9fc, #eef2f8); border-radius: 8px; user-select: none; -webkit-user-select: none; }
+.mol-tool { cursor: default; }
+.mol-tool.hot { cursor: pointer; animation: mol-glow 1.4s ease-in-out infinite; }
+@keyframes mol-glow { 0%, 100% { filter: drop-shadow(0 0 0 rgba(242,153,74,0)); } 50% { filter: drop-shadow(0 0 6px rgba(242,153,74,.95)); } }
+.mol-lbl { font-size: 12px; font-weight: 700; fill: #1f2933; }
+.mol-sub { font-size: 10px; fill: #5c6675; }
+.mol-lcd { font-size: 15px; font-family: ui-monospace, Consolas, monospace; fill: #7cf29a; }
+.mol-btn-t { font-size: 10px; font-weight: 700; fill: #fff; pointer-events: none; }
+.mol-steps { margin: 0; padding-left: 22px; font-size: 13px; line-height: 1.7; color: var(--muted); }
+.mol-steps li.on { color: var(--primary); font-weight: 700; }
+.mol-steps li.done { color: #27ae60; }
+.mol-steps li.done::marker { content: '✓ '; }
+.mol-calc { background: #f6f8fb; border-radius: 6px; padding: 8px; line-height: 1.7; }
+.mol-check { margin: 0; padding-left: 18px; line-height: 1.6; }
+.mol-legend { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; }
+.mol-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }

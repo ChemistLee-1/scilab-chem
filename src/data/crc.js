@@ -17,6 +17,7 @@ export const SOURCES = {
   vdw: 'Van der Waals Constants for Gases (6-56)',
   vp: 'Vapor Pressure (6-88~6-100)',
   organic: 'Physical Constants of Organic Compounds (3-4~3-246)',
+  inorganic: 'Physical Constants of Inorganic Compounds (4-83, 4-90)',
   indicators: 'Indicators for Acids and Bases (8-84)',
   radii: 'Atomic Radii of the Elements (9-49~9-50)',
   en: 'Electronegativity (9-97)',
@@ -60,7 +61,7 @@ export const elementBySym = Object.fromEntries(ELEMENTS.map((e) => [e.sym, e]));
 
 // 화학식 → 몰질량 (g/mol). 예: 'NH4NO3', 'Ca(OH)2'
 export function molarMass(formula) {
-  const extra = { Cu: 63.546, Zn: 65.38, Fe: 55.845, Ag: 107.8682, Ni: 58.6934, Sn: 118.71, Sr: 87.62 };
+  const extra = { I: 126.90447, Cu: 63.546, Zn: 65.38, Fe: 55.845, Ag: 107.8682, Ni: 58.6934, Sn: 118.71, Sr: 87.62 };
   const mass = (s) => elementBySym[s]?.mass ?? extra[s];
   const parse = (str) => {
     let total = 0;
@@ -180,6 +181,16 @@ export const REDUCTION_POTENTIALS = [
   { sym: 'Cu', ko: '구리', ion: 'Cu²⁺', n: 2, E: 0.3419 },
   { sym: 'Ag', ko: '은', ion: 'Ag⁺', n: 1, E: 0.7996 },
   { sym: 'Au', ko: '금', ion: 'Au³⁺', n: 3, E: 1.498 },
+];
+
+// ── 몰 농도 용액 만들기: 고체 용질 — 몰질량이 정수에 가까운 물질 (0.01 g 저울로 필요한 질량을 정확히 달 수 있음)
+// density: 고체 밀도 (g/cm³), sol: 25 °C 물 100 g 에 녹는 최대 질량 (g)
+// NaOH 39.997 (4-90), NaHCO3 84.007 (4-90), KI 166.003 (4-83)
+export const SOLUTES = [
+  { id: 'NaOH', ko: '수산화 나트륨', formula: 'NaOH', label: 'NaOH', hydrate: 0, density: 2.13, sol: 100,
+    tip: '수산화 나트륨은 공기 중의 수분을 흡수하므로 빠르게 달고, 녹을 때 열이 나므로 식힌 뒤 플라스크로 옮깁니다.' },
+  { id: 'NaHCO3', ko: '탄산수소 나트륨', formula: 'NaHCO3', label: 'NaHCO₃', hydrate: 0, density: 2.20, sol: 10.3 },
+  { id: 'KI', ko: '아이오딘화 칼륨', formula: 'KI', label: 'KI', hydrate: 0, density: 3.12, sol: 148 },
 ];
 
 // 선형 보간

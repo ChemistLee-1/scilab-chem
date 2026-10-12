@@ -29,6 +29,7 @@
 | Van der Waals Constants for Gases | 6-56 | a, b |
 | Vapor Pressure | 6-88~6-100 | 유기 용매 (10 kPa, 100 kPa 온도) |
 | Physical Constants of Organic Compounds | 3-4~3-246 | 용매 녹는점·끓는점 |
+| Physical Constants of Inorganic Compounds | 4-83, 4-90 | KI·NaOH·NaHCO₃ 고체 밀도와 25 °C 용해도 (몰 농도) |
 | Indicators for Acids and Bases | 8-84 | 지시약 변색 범위 |
 | Atomic Radii of the Elements | 9-49~9-50 | 공유 반지름 |
 | Electronegativity | 9-97 | Pauling 전기음성도 |
