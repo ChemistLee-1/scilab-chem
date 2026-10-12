@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Select, Slider, SimLayout, ScaleNote, Readout, useAnimationFrame, sci } from './common.jsx';
+import { Select, SimLayout, ScaleNote, Readout, useAnimationFrame, sci } from './common.jsx';
 import { SOLUTES, NA, molarMass } from '../data/crc.js';
 
 /* =========================================================
@@ -28,9 +28,9 @@ const STEPS = ['필요한 질량 계산', '질량 측정', '비커에서 녹이�
 
 // 입자 색 (점 1개 = 화학식 단위 하나를 나타내는 양)
 const PARTICLES = {
-  NaCl: [['Na⁺', '#9b51e0', 2.4], ['Cl⁻', '#27ae60', 3.3]],
-  CuSO4: [['Cu²⁺', '#1f6fd6', 2.6], ['SO₄²⁻', '#f2994a', 3.4]],
-  glucose: [['C₆H₁₂O₆', '#eb5757', 3.2]],
+  NaOH: [['Na⁺', '#9b51e0', 2.4], ['OH⁻', '#eb5757', 3.0]],
+  NaHCO3: [['Na⁺', '#9b51e0', 2.4], ['HCO₃⁻', '#f2994a', 3.4]],
+  KI: [['K⁺', '#2f80ed', 2.8], ['I⁻', '#27ae60', 3.6]],
 };
 
 // ── 부피 플라스크 그림 (모든 크기를 같은 모양으로 그림)
@@ -74,6 +74,8 @@ const SEEDS = Array.from({ length: 600 }, () => ({ u: Math.random(), s: Math.ran
 const niceStep = (x) => { const p = 10 ** Math.floor(Math.log10(x)); const m = x / p; return (m >= 5 ? 5 : m >= 2 ? 2 : 1) * p; };
 const rnd = (a) => a * (0.6 + Math.random() * 0.8);
 const fmt = (x, d = 2) => x.toFixed(d);
+// 만들 몰 농도: 몰질량이 정수에 가까운 용질과 함께 쓰면 필요한 질량이 0.01 g 단위로 딱 떨어짐
+const TARGETS = [0.1, 0.2, 0.5];
 
 function newLab() {
   return {
@@ -87,7 +89,7 @@ function newLab() {
 }
 
 export default function Molarity() {
-  const [soluteId, setSoluteId] = useState('CuSO4');
+  const [soluteId, setSoluteId] = useState('NaOH');
   const [flaskV, setFlaskV] = useState(100);
   const [target, setTarget] = useState(0.1);
   const [scoop, setScoop] = useState('mid');
@@ -124,14 +126,14 @@ export default function Molarity() {
   const randomTask = () => {
     const s = SOLUTES[Math.floor(Math.random() * SOLUTES.length)];
     const v = [50, 100, 250][Math.floor(Math.random() * 3)];
-    changeSetting(() => { setSoluteId(s.id); setFlaskV(v); setTarget(Math.round(5 + Math.random() * 45) / 100); });
+    changeSetting(() => { setSoluteId(s.id); setFlaskV(v); setTarget(TARGETS[Math.floor(Math.random() * TARGETS.length)]); });
   };
 
   // ───────── 실험 동작
   const act = {
     checkAnswer() {
       const a = Number(L.answer);
-      L.answerOk = Math.abs(a - mNeed) / mNeed <= 0.01;
+      L.answerOk = Math.abs(a - mNeed) < 0.006; // 저울 최소 눈금 0.01 g 까지 맞으면 정답
       L.msg = L.answerOk ? '정답입니다! 이제 이 질량만큼 용질을 달아 봅시다.' : '다시 계산해 보세요. (몰 → 질량)';
       redraw();
     },
@@ -271,8 +273,7 @@ export default function Molarity() {
   // ───────── 그림 계산
   const t = L.time;
   const ions = PARTICLES[sol.id];
-  const conc2alpha = (c) => (sol.id === 'CuSO4' ? Math.min(0.85, 0.12 + c * 1.3) : 0);
-  const solnFill = (c) => (sol.id === 'CuSO4' ? `rgba(31,111,214,${conc2alpha(c)})` : 'rgba(150,195,255,0.35)');
+  const solnFill = () => 'rgba(150,195,255,0.35)'; // 세 용액 모두 무색
   const waterFill = 'rgba(150,195,255,0.35)';
 
   const levelY = yForVs(L.flaskVol / kV);
@@ -336,8 +337,8 @@ export default function Molarity() {
   const errPct = ((cReal - target) / target) * 100;
 
   const stepHelp = [
-    `${sol.ko}(${sol.label}) ${target.toFixed(2)} M 용액 ${flaskV} mL 를 만들려면 용질이 몇 g 필요할까요?`,
-    `저울에 칭량 접시를 올리고 → 영점(TARE) → 시약병을 눌러 약숟가락으로 덜어 넣으세요. 목표 ${fmt(mNeed, 2)} g 에 최대한 가깝게!`,
+    `${sol.ko}(${sol.label}) ${target.toFixed(1)} M 용액 ${flaskV} mL 를 만들려면 용질이 몇 g 필요할까요?`,
+    `저울에 칭량 접시를 올리고 → 영점(TARE) → 시약병을 눌러 약숟가락으로 덜어 넣으세요. 목표 ${fmt(mNeed, 2)} g 에 최대한 가깝게!${sol.tip ? ` (${sol.tip})` : ''}`,
     '접시를 눌러 용질을 비커에 옮기고, 세척병(누르고 있기)으로 물을 조금 넣은 뒤 유리 막대(누르고 있기)로 저어 다 녹이세요.',
     '깔때기를 플라스크에 꽂고, 비커를 눌러 용액을 부으세요.',
     '비커와 유리 막대에 묻은 용액도 옮겨야 합니다. 세척병으로 비커에 물을 조금(약 5~10 mL) 넣고 비커를 눌러 붓기를 2~3번 반복하세요.',
@@ -367,14 +368,14 @@ export default function Molarity() {
         <rect x="42" y="300" width="42" height="20" fill="#e6e1d7" stroke="#8a8f99" strokeWidth="2" />
         <rect x="34" y="350" width="58" height="44" fill="#fff" stroke="#c9ccd3" />
         <text x="63" y="368" textAnchor="middle" className="mol-lbl">{sol.label}</text>
-        <text x="63" y="384" textAnchor="middle" className="mol-sub">{fmt(M, 2)} g/mol</text>
-        <path d="M36 420 q27 -16 54 0 z" fill={sol.id === 'CuSO4' ? '#2d7fe0' : '#fbfbfb'} stroke="#ccc" />
+        <text x="63" y="384" textAnchor="middle" className="mol-sub">{fmt(M, 1)} g/mol</text>
+        <path d="M36 420 q27 -16 54 0 z" fill="#fbfbfb" stroke="#ccc" />
       </g>
       {/* 약숟가락 움직임 */}
       {L.anim?.kind === 'scoop' && (() => {
         const p = L.anim.t / L.anim.dur;
         const x = 70 + p * 135, y = 300 - Math.sin(p * Math.PI) * 50;
-        return <g><line x1={x - 40} y1={y - 18} x2={x} y2={y} stroke="#777" strokeWidth="3" /><ellipse cx={x + 4} cy={y + 1} rx="7" ry="3.5" fill={sol.id === 'CuSO4' ? '#2d7fe0' : '#eee'} stroke="#777" /></g>;
+        return <g><line x1={x - 40} y1={y - 18} x2={x} y2={y} stroke="#777" strokeWidth="3" /><ellipse cx={x + 4} cy={y + 1} rx="7" ry="3.5" fill="#eee" stroke="#777" /></g>;
       })()}
 
       {/* 전자저울 */}
@@ -398,7 +399,7 @@ export default function Molarity() {
         return (
           <g className={hot('boat')} onClick={act.boat} transform={`translate(${bx} ${by}) rotate(${toB > 0.5 ? (toB - 0.5) * 120 : 0})`}>
             <path d="M-30 -8 h60 l-8 10 h-44 z" fill="#f4f4f4" stroke="#8a8f99" strokeWidth="1.5" />
-            {L.boatSolid > 0 && <path d={`M${-16 * Math.min(1.4, pile)} -8 q${16 * Math.min(1.4, pile)} ${-14 * Math.min(1.5, pile) - 2} ${32 * Math.min(1.4, pile)} 0 z`} fill={sol.id === 'CuSO4' ? '#2d7fe0' : '#fdfdfd'} stroke="#aaa" strokeWidth="0.8" />}
+            {L.boatSolid > 0 && <path d={`M${-16 * Math.min(1.4, pile)} -8 q${16 * Math.min(1.4, pile)} ${-14 * Math.min(1.5, pile) - 2} ${32 * Math.min(1.4, pile)} 0 z`} fill="#fdfdfd" stroke="#aaa" strokeWidth="0.8" />}
           </g>
         );
       })()}
@@ -421,7 +422,7 @@ export default function Molarity() {
                 {!pouring && <text x={-BK.w + 23} y={BK.h - 1 - f * (BK.h - 16)} className="mol-sub">{fk.beaker * f}</text>}</g>
             ))}
             {!pouring && L.beakerSolid > 0 && (
-              <path d={`M${-BK.w / 2 - 18 * Math.min(1.3, Math.sqrt(L.beakerSolid / mNeed))} ${BK.h - 3} q${18 * Math.min(1.3, Math.sqrt(L.beakerSolid / mNeed))} -${16 * Math.min(1.3, Math.sqrt(L.beakerSolid / mNeed))} ${36 * Math.min(1.3, Math.sqrt(L.beakerSolid / mNeed))} 0 z`} fill={sol.id === 'CuSO4' ? '#2d7fe0' : '#fbfbfb'} stroke="#aaa" />
+              <path d={`M${-BK.w / 2 - 18 * Math.min(1.3, Math.sqrt(L.beakerSolid / mNeed))} ${BK.h - 3} q${18 * Math.min(1.3, Math.sqrt(L.beakerSolid / mNeed))} -${16 * Math.min(1.3, Math.sqrt(L.beakerSolid / mNeed))} ${36 * Math.min(1.3, Math.sqrt(L.beakerSolid / mNeed))} 0 z`} fill="#fbfbfb" stroke="#aaa" />
             )}
             {!pouring && dotsIn(nBeakerDots, 300, (sd) => {
               const top = bkLevel - BK.y + 5, bot = BK.h - 6;
@@ -431,7 +432,7 @@ export default function Molarity() {
           </g>
         );
       })()}
-      {pouring && <line x1={FX - 24} y1={100} x2={FX - 12} y2={128} stroke={sol.id === 'CuSO4' ? solnFill(beakerConc) : '#7fb3ff'} strokeWidth="4" strokeLinecap="round" />}
+      {pouring && <line x1={FX - 24} y1={100} x2={FX - 12} y2={128} stroke="#7fb3ff" strokeWidth="4" strokeLinecap="round" />}
       {/* 유리 막대 */}
       {!pouring && (
         <g className={hot('rod')} onPointerDown={startHold('stir')} style={{ touchAction: 'none' }}>
@@ -498,7 +499,7 @@ export default function Molarity() {
           <g clipPath="url(#molZoom)">
             <rect x={ZX - ZW} y={ZY - ZR} width={ZW * 2} height={ZR * 2} fill="#f7fbff" />
             <path d={`M${ZX - ZW} ${ZY + ZR} V${zLevel - 6} Q${ZX} ${zLevel + 6} ${ZX + ZW} ${zLevel - 6} V${ZY + ZR} Z`}
-              fill={sol.id === 'CuSO4' ? solnFill(flaskConc) : 'rgba(120,175,250,0.45)'} />
+              fill="rgba(120,175,250,0.45)" />
             <line x1={ZX - ZW - 12} x2={ZX + ZW + 12} y1={ZY} y2={ZY} stroke="#111" strokeWidth="1.6" />
             <line x1={ZX - ZW} x2={ZX - ZW} y1={ZY - ZR} y2={ZY + ZR} stroke="#7b8494" strokeWidth="3" />
             <line x1={ZX + ZW} x2={ZX + ZW} y1={ZY - ZR} y2={ZY + ZR} stroke="#7b8494" strokeWidth="3" />
@@ -518,8 +519,8 @@ export default function Molarity() {
         options={SOLUTES.map((s) => ({ value: s.id, label: `${s.ko} ${s.label}` }))} />
       <Select label="부피 플라스크" value={String(flaskV)} onChange={(v) => changeSetting(() => setFlaskV(Number(v)))}
         options={[50, 100, 250].map((v) => ({ value: String(v), label: `${v} mL` }))} />
-      <Slider label="만들 몰 농도" value={target} min={0.05} max={0.5} step={0.01} unit=" M" format={(v) => v.toFixed(2)}
-        onChange={(v) => changeSetting(() => setTarget(v))} />
+      <Select label="만들 몰 농도" value={String(target)} onChange={(v) => changeSetting(() => setTarget(Number(v)))}
+        options={TARGETS.map((v) => ({ value: String(v), label: `${v.toFixed(1)} M` }))} />
       <div className="btn-row">
         <button className="btn btn-ghost" onClick={randomTask}>무작위 과제</button>
         <button className="btn btn-ghost" onClick={reset}>처음부터</button>
@@ -542,7 +543,7 @@ export default function Molarity() {
           {L.showSolution && (
             <div className="small mol-calc">
               n = C × V = {target.toFixed(2)} mol/L × {(flaskV / 1000).toFixed(3)} L = <b>{sci(nTarget, 3)} mol</b><br />
-              m = n × M = {sci(nTarget, 3)} mol × {fmt(M, 2)} g/mol = <b>{fmt(mNeed, 3)} g</b><br />
+              m = n × M = {sci(nTarget, 3)} mol × {fmt(M, 1)} g/mol = <b>{fmt(mNeed, 2)} g</b><br />
               입자 수 = n × N<sub>A</sub> = {sci(nTarget * NA, 2)} 개
             </div>
           )}
@@ -625,7 +626,7 @@ export default function Molarity() {
             {Math.abs(errPct) <= 1 && L.mix >= 0.95 ? '훌륭합니다! 목표 농도의 1 % 안으로 정확하게 만들었어요.' : '오차의 원인을 아래에서 찾아보세요.'}
           </div>
           <ul className="small mol-check">
-            <li>단 질량 {fmt(massTrue)} g (목표 {fmt(mNeed)} g, {fmt(((massTrue - mNeed) / mNeed) * 100, 1)} %)</li>
+            <li>저울 값 {fmt(L.recorded ?? 0)} g, 실제 질량 {fmt(massTrue, 3)} g (목표 {fmt(mNeed)} g, {fmt(((massTrue - mNeed) / mNeed) * 100, 1)} %) — 저울은 0.01 g 아래를 읽지 못함</li>
             <li>비커·유리 막대에 남아 못 옮긴 용질 {fmt(lossPct, 2)} %{L.rinses === 0 ? ' — 헹구지 않았어요' : ` (${L.rinses}번 헹굼)`}</li>
             <li>용액 부피 {fmt(L.flaskVol, 2)} mL (표선 {flaskV} mL, 허용 오차 ±{fk.tol} mL){Math.abs(volErr) > fk.tol ? (volErr > 0 ? ' — 표선을 넘었어요' : ' — 표선에 못 미쳤어요') : ''}</li>
             <li>{L.mix >= 0.95 ? '고르게 섞였어요.' : `아직 고르게 섞이지 않았어요 (${Math.round(L.mix * 100)} %). 위쪽 용액을 덜어 쓰면 농도가 낮습니다.`}</li>
@@ -652,7 +653,8 @@ export default function Molarity() {
   return (
     <SimLayout canvas={canvas} controls={controls}
       footer={<ScaleNote items={[
-        '몰질량은 CRC 원자량(1-11)으로 계산, 녹을 수 있는 최대량은 CRC 용해도(25 °C)로 판단합니다. 물 1 mL = 1 g 으로 가정',
+        '용질은 CRC 몰질량이 정수에 가까운 물질(NaOH 39.997, NaHCO₃ 84.007, KI 166.003 g/mol)이라 화면에는 0.1 단위로 표시하고, 계산은 CRC 원자량(1-11) 값 그대로 함',
+        '녹을 수 있는 최대량은 CRC 용해도(25 °C, 4-83·4-90)로 판단. 물 1 mL = 1 g 으로 가정',
         '부피 플라스크는 크기와 상관없이 같은 모양으로 그렸고, 확대창은 목 안지름 가정값(50 mL 1.1 cm, 100 mL 1.3 cm, 250 mL 1.5 cm)으로 1 mm = 5 px 로 그림',
         `표선 허용 오차는 A급 부피 플라스크 값(ASTM E288: ±0.05, ±0.08, ±0.12 mL), 스포이트 1방울 = ${DROP} mL, 칭량 접시 ${BOAT_MASS} g, 저울 최소 눈금 0.01 g 으로 가정`,
         `붓고 난 뒤 비커 벽과 유리 막대에 용액 ${FILM} mL 가 남는다고 가정 — 헹굴 때마다 남는 용질이 줄어듦`,
