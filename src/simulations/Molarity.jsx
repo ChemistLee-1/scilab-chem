@@ -16,11 +16,12 @@ const FLASKS = {
   50: { neck: 1.1, tol: 0.05, beaker: 100 }, // 목 안지름 (cm), A급 허용 오차 (mL), 함께 쓰는 비커 (mL)
   100: { neck: 1.3, tol: 0.08, beaker: 100 },
   250: { neck: 1.5, tol: 0.12, beaker: 250 },
+  1000: { neck: 2.1, tol: 0.30, beaker: 1000 },
 };
 const BOAT_MASS = 1.83; // 칭량 접시 질량 (g)
 const DROP = 0.05; // 스포이트 한 방울 (mL)
 const FILM = 1.0; // 용액을 부은 뒤 비커 벽·유리 막대에 남는 용액 (mL)
-const SCOOP = { big: 2, mid: 0.2, small: 0.02 }; // 약숟가락으로 한 번에 옮기는 양 (g, ±40 % 무작위)
+const SCOOP = { huge: 10, big: 2, mid: 0.2, small: 0.02 }; // 약숟가락으로 한 번에 옮기는 양 (g, ±40 % 무작위)
 const MIX_PER_INVERT = 0.7; // 한 번 뒤집을 때마다 덜 섞인 정도가 이만큼으로 줄어듦
 const hydrateMass = (s) => molarMass(s.formula) + s.hydrate * molarMass('H2O');
 
@@ -75,7 +76,8 @@ const niceStep = (x) => { const p = 10 ** Math.floor(Math.log10(x)); const m = x
 const rnd = (a) => a * (0.6 + Math.random() * 0.8);
 const fmt = (x, d = 2) => x.toFixed(d);
 // 만들 몰 농도: 몰질량이 정수에 가까운 용질과 함께 쓰면 필요한 질량이 0.01 g 단위로 딱 떨어짐
-const TARGETS = [0.1, 0.2, 0.5];
+const TARGETS = [0.1, 0.2, 0.5, 1.0];
+const VOLUMES = [50, 100, 250, 1000];
 
 function newLab() {
   return {
@@ -114,6 +116,7 @@ export default function Molarity() {
   const beakerConc = beakerVol > 0 ? L.beakerDis / M / (beakerVol / 1000) : 0;
   const flaskConc = L.flaskVol > 0 ? L.flaskSolute / M / (L.flaskVol / 1000) : 0;
 
+  const minWater = (mNeed * 100) / sol.sol; // 다 녹이는 데 필요한 최소 물 (mL, 무수물 기준)
   // 지금 물의 양으로 녹일 수 있는 최대 질량 (수화물의 결정수는 녹으면 용매가 됨)
   const maxDissolve = (water) => {
     const s = sol.sol / 100;
@@ -125,7 +128,7 @@ export default function Molarity() {
   const changeSetting = (fn) => { fn(); lab.current = newLab(); redraw(); };
   const randomTask = () => {
     const s = SOLUTES[Math.floor(Math.random() * SOLUTES.length)];
-    const v = [50, 100, 250][Math.floor(Math.random() * 3)];
+    const v = VOLUMES[Math.floor(Math.random() * VOLUMES.length)];
     changeSetting(() => { setSoluteId(s.id); setFlaskV(v); setTarget(TARGETS[Math.floor(Math.random() * TARGETS.length)]); });
   };
 
@@ -225,7 +228,8 @@ export default function Molarity() {
     s.time += dt;
     const h = hold.current;
     if (h === 'wash') {
-      const rate = flaskV / 25; // mL/s
+      // mL/s. 표선 근처(95 % 이상)에서는 세척병을 살살 짜서 4 mL/s 이하
+      const rate = s.step === 5 && s.flaskVol > flaskV * 0.95 ? Math.min(4, flaskV / 25) : flaskV / 25;
       if (s.step === 5) s.flaskVol = Math.min(V_TOP * kV, s.flaskVol + rate * dt);
       else {
         const add = Math.min(rate * dt, fk.beaker - (s.beakerWater + s.beakerDis / sol.density));
@@ -518,7 +522,7 @@ export default function Molarity() {
       <Select label="용질" value={soluteId} onChange={(v) => changeSetting(() => setSoluteId(v))}
         options={SOLUTES.map((s) => ({ value: s.id, label: `${s.ko} ${s.label}` }))} />
       <Select label="부피 플라스크" value={String(flaskV)} onChange={(v) => changeSetting(() => setFlaskV(Number(v)))}
-        options={[50, 100, 250].map((v) => ({ value: String(v), label: `${v} mL` }))} />
+        options={VOLUMES.map((v) => ({ value: String(v), label: v === 1000 ? '1000 mL (1 L)' : `${v} mL` }))} />
       <Select label="만들 몰 농도" value={String(target)} onChange={(v) => changeSetting(() => setTarget(Number(v)))}
         options={TARGETS.map((v) => ({ value: String(v), label: `${v.toFixed(1)} M` }))} />
       <div className="btn-row">
@@ -535,6 +539,7 @@ export default function Molarity() {
         <p className="small">{stepHelp}</p>
 
         {L.step === 0 && (<>
+          {minWater > flaskV * 0.6 && <div className="feedback no">이 농도는 25 °C 용해도(물 100 g 에 {sol.sol} g)에 가까워, 녹이는 데만 물이 최소 {Math.ceil(minWater)} mL 필요합니다. 헹굼 물을 넣을 여유가 거의 없어요.</div>}
           <div className="btn-row">
             <input className="num-input" value={L.answer} onChange={(e) => { L.answer = e.target.value; redraw(); }} placeholder="질량 (g)" />
             <button className="btn" onClick={act.checkAnswer}>확인</button>
@@ -557,6 +562,7 @@ export default function Molarity() {
           </div>
           <label className="select"><span>약숟가락으로 한 번에</span>
             <select value={scoop} onChange={(e) => setScoop(e.target.value)}>
+              {mNeed > 20 && <option value="huge">아주 많이 (약 10 g)</option>}
               <option value="big">많이 (약 2 g)</option>
               <option value="mid">조금 (약 0.2 g)</option>
               <option value="small">톡톡 (약 0.02 g)</option>
@@ -655,11 +661,11 @@ export default function Molarity() {
       footer={<ScaleNote items={[
         '용질은 CRC 몰질량이 정수에 가까운 물질(NaOH 39.997, NaHCO₃ 84.007, KI 166.003 g/mol)이라 화면에는 0.1 단위로 표시하고, 계산은 CRC 원자량(1-11) 값 그대로 함',
         '녹을 수 있는 최대량은 CRC 용해도(25 °C, 4-83·4-90)로 판단. 물 1 mL = 1 g 으로 가정',
-        '부피 플라스크는 크기와 상관없이 같은 모양으로 그렸고, 확대창은 목 안지름 가정값(50 mL 1.1 cm, 100 mL 1.3 cm, 250 mL 1.5 cm)으로 1 mm = 5 px 로 그림',
-        `표선 허용 오차는 A급 부피 플라스크 값(ASTM E288: ±0.05, ±0.08, ±0.12 mL), 스포이트 1방울 = ${DROP} mL, 칭량 접시 ${BOAT_MASS} g, 저울 최소 눈금 0.01 g 으로 가정`,
+        '부피 플라스크는 크기와 상관없이 같은 모양으로 그렸고, 확대창은 목 안지름 가정값(50 mL 1.1 cm, 100 mL 1.3 cm, 250 mL 1.5 cm, 1 L 2.1 cm)으로 1 mm = 5 px 로 그림',
+        `표선 허용 오차는 A급 부피 플라스크 값(ASTM E288: 50 mL ±0.05, 100 mL ±0.08, 250 mL ±0.12, 1 L ±0.30 mL), 스포이트 1방울 = ${DROP} mL, 칭량 접시 ${BOAT_MASS} g, 저울 최소 눈금 0.01 g 으로 가정`,
         `붓고 난 뒤 비커 벽과 유리 막대에 용액 ${FILM} mL 가 남는다고 가정 — 헹굴 때마다 남는 용질이 줄어듦`,
         '용액 부피 = 넣은 물 + 녹은 용질 질량 ÷ 고체 밀도(CRC)로 근사 (섞일 때 부피 변화는 무시)',
-        '세척병은 플라스크 부피의 1/25 mL/s, 녹는 빠르기·뒤집어 섞이는 정도·점의 움직임은 화면용',
+        '세척병은 플라스크 부피의 1/25 mL/s (표선 근처에서는 최대 4 mL/s), 녹는 빠르기·뒤집어 섞이는 정도·점의 움직임은 화면용',
       ]} />}
     />
   );
