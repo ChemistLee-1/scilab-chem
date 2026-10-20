@@ -178,3 +178,9 @@ export function bisect(f, lo, hi, iter = 100) {
   }
   return (lo + hi) / 2;
 }
+
+// 화학식 속 숫자를 아랫첨자 글자로 바꿈 (예: 'NH4NO3' → 'NH₄NO₃')
+// 선택 상자(드롭다운) 안에서는 <sub> 태그가 안 먹혀서, 아랫첨자 모양의 글자로 대신 씀
+export function subscript(formula) {
+  return formula.replace(/\d/g, (d) => '₀₁₂₃₄₅₆₇₈₉'[d]);
+}
