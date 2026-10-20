@@ -4,6 +4,7 @@ import { SOLUTION_ENTHALPY, WATER_CP, molarMass } from '../data/crc.js';
 
 const T0 = 25; // 처음 물 온도 (°C)
 const TAU = 6; // 온도 변화 시정수 (초, 화면용)
+const formatFormula = (formula) => formula.replace(/\d/g, (digit) => '₀₁₂₃₄₅₆₇₈₉'[digit]);
 
 export default function DissolutionHeat() {
   const [solute, setSolute] = useState('NH4NO3');
@@ -57,7 +58,7 @@ export default function DissolutionHeat() {
       </>}
       controls={<>
         <Select label="용질" value={solute} onChange={setSolute}
-          options={SOLUTION_ENTHALPY.map((s) => ({ value: s.formula, label: `${s.ko} (${s.formula})` }))} />
+          options={SOLUTION_ENTHALPY.map((s) => ({ value: s.formula, label: `${s.ko} (${formatFormula(s.formula)})` }))} />
         <Slider label="용질 질량" value={mass} min={1} max={20} unit=" g" onChange={setMass} />
         <Slider label="물의 질량" value={water} min={100} max={300} step={10} unit=" g" onChange={setWater} />
         <button className="btn" onClick={start}>용질 넣기</button>
