@@ -90,6 +90,9 @@ tr.flash { animation: flash 2s ease; }
 .pcell.on { stroke: var(--accent); stroke-width: 3; }
 .psym { font-size: 18px; font-weight: 700; fill: #1f2933; pointer-events: none; }
 .pz { font-size: 10px; fill: #8892a0; pointer-events: none; }
+.ptable-3d { touch-action: none; user-select: none; cursor: grab; }
+.psym-3d { font-size: 15px; paint-order: stroke; stroke: #fff; stroke-width: 3px; }
+.pval-3d { font-size: 12px; font-weight: 700; fill: var(--accent); paint-order: stroke; stroke: #fff; stroke-width: 3px; pointer-events: none; }
 
 /* 결합 */
 .atom-sym { font-size: 22px; font-weight: 800; fill: #1f2933; }
