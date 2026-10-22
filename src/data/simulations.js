@@ -13,6 +13,7 @@ import Colligative from '../simulations/Colligative.jsx';
 import DissolutionHeat from '../simulations/DissolutionHeat.jsx';
 import DynamicEquilibrium from '../simulations/DynamicEquilibrium.jsx';
 import Equilibrium from '../simulations/Equilibrium.jsx';
+import MoleSize from '../simulations/MoleSize.jsx';
 import Molarity from '../simulations/Molarity.jsx';
 import AcidPH from '../simulations/AcidPH.jsx';
 import Titration from '../simulations/Titration.jsx';
@@ -128,6 +129,16 @@ export const simulations = [
     standards: ['12화학03-02', '12화학03-03', '12화학03-04'],
     sources: ['thermo', 'constants'],
     component: Equilibrium,
+  },
+  {
+    id: 'mole-size',
+    title: '1 mol 은 얼마나 클까?',
+    description: '물, 철·구리·알루미늄·금, 헬륨·산소·이산화 탄소의 1 mol 을 실제 크기 비율로 보고, 질량·부피·입자 수를 비교합니다. 6.02 × 10²³ 개를 하나씩 세면 몇 년이 걸리는지도 계산해 봅니다.',
+    goals: ['1 mol 에 들어 있는 입자 수(아보가드로수)가 매우 큰 수임을 체감한다', '같은 1 mol 이라도 물질마다 질량과 부피가 다름을 안다', '기체 1 mol 의 부피는 기체 종류와 관계없이 같음(0 °C, 1 atm 에서 22.4 L)을 안다', '입자 수·질량·부피를 몰로 서로 환산한다'],
+    places: ['chem-1-2'],
+    standards: ['12화학01-02'],
+    sources: ['constants', 'atomicWeights', 'waterDensity', 'elementDensity'],
+    component: MoleSize,
   },
   {
     id: 'molarity',
