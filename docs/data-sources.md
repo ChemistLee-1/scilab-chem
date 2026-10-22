@@ -30,6 +30,8 @@
 | Vapor Pressure | 6-88~6-100 | 유기 용매 (10 kPa, 100 kPa 온도) |
 | Physical Constants of Organic Compounds | 3-4~3-246 | 용매 녹는점·끓는점 |
 | Physical Constants of Inorganic Compounds | 4-83, 4-90 | KI·NaOH·NaHCO₃ 고체 밀도와 25 °C 용해도 (몰 농도) |
+| Physical Constants of Inorganic Compounds (원소) | 4-43~ (쪽 확인 필요) | Fe·Cu·Al·Au 밀도 (1 mol 크기) |
+| Standard Density of Water | 6-7 (쪽 확인 필요) | 25 °C 물 밀도 0.99705 g/cm³ (1 mol 크기) |
 | Indicators for Acids and Bases | 8-84 | 지시약 변색 범위 |
 | Atomic Radii of the Elements | 9-49~9-50 | 공유 반지름 |
 | Electronegativity | 9-97 | Pauling 전기음성도 |

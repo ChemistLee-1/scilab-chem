@@ -18,6 +18,8 @@ export const SOURCES = {
   vp: 'Vapor Pressure (6-88~6-100)',
   organic: 'Physical Constants of Organic Compounds (3-4~3-246)',
   inorganic: 'Physical Constants of Inorganic Compounds (4-83, 4-90)',
+  elementDensity: 'Physical Constants of Inorganic Compounds — 금속 원소의 밀도 (4-43~)',
+  waterDensity: 'Standard Density of Water (6-7)',
   indicators: 'Indicators for Acids and Bases (8-84)',
   radii: 'Atomic Radii of the Elements (9-49~9-50)',
   en: 'Electronegativity (9-97)',
@@ -61,7 +63,7 @@ export const elementBySym = Object.fromEntries(ELEMENTS.map((e) => [e.sym, e]));
 
 // 화학식 → 몰질량 (g/mol). 예: 'NH4NO3', 'Ca(OH)2'
 export function molarMass(formula) {
-  const extra = { I: 126.90447, Cu: 63.546, Zn: 65.38, Fe: 55.845, Ag: 107.8682, Ni: 58.6934, Sn: 118.71, Sr: 87.62 };
+  const extra = { Au: 196.966569, I: 126.90447, Cu: 63.546, Zn: 65.38, Fe: 55.845, Ag: 107.8682, Ni: 58.6934, Sn: 118.71, Sr: 87.62 };
   const mass = (s) => elementBySym[s]?.mass ?? extra[s];
   const parse = (str) => {
     let total = 0;
@@ -132,6 +134,20 @@ export const SOLUTION_ENTHALPY = [
   { formula: 'KNO3', ko: '질산 칼륨', dH: 34.89 },
 ];
 export const WATER_CP = 4.1806; // J g⁻¹ K⁻¹, 300 K, 0.1 MPa (6-2)
+
+// ── 1 mol 체험용 물질 (몰질량은 molarMass + 원자량 1-11)
+// state: 'liquid' 액체, 'metal' 금속(고체), 'gas' 기체
+// rho: 밀도 g/cm³ — 물은 25 °C (6-7), 금속은 상온 값 (4-43~). 기체는 이상 기체로 계산하므로 없음
+export const MOLE_SUBSTANCES = [
+  { id: 'H2O', ko: '물', formula: 'H2O', state: 'liquid', rho: 0.99705, color: '#5dade2' },
+  { id: 'Fe', ko: '철', formula: 'Fe', state: 'metal', rho: 7.87, color: '#8a9099' },
+  { id: 'Cu', ko: '구리', formula: 'Cu', state: 'metal', rho: 8.96, color: '#c87533' },
+  { id: 'Al', ko: '알루미늄', formula: 'Al', state: 'metal', rho: 2.70, color: '#c4cad3' },
+  { id: 'Au', ko: '금', formula: 'Au', state: 'metal', rho: 19.3, color: '#e3b52c' },
+  { id: 'He', ko: '헬륨', formula: 'He', state: 'gas', color: '#f2c94c' },
+  { id: 'O2', ko: '산소', formula: 'O2', state: 'gas', color: '#27ae60' },
+  { id: 'CO2', ko: '이산화 탄소', formula: 'CO2', state: 'gas', color: '#7b8794' },
+];
 
 // ── 화학 평형: N2O4(g) ⇌ 2NO2(g) (5-16 등, 298.15 K)
 export const N2O4_EQ = {
