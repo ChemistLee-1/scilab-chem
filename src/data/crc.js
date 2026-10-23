@@ -23,6 +23,9 @@ export const SOURCES = {
   en: 'Electronegativity (9-97)',
   spectra: 'Line Spectra of the Elements (10-1~)',
   colligative: 'Ebullioscopic / Cryoscopic Constants (15-27~15-28)',
+  elements: 'Physical Constants of Inorganic Compounds — 원소 밀도 (4-44~4-88)',
+  ice: 'Properties of Ice and Supercooled Water (6-12)',
+  liquidExp: 'Compressibility and Expansion Coefficients of Liquids (6-157)',
 };
 
 // ── 기본 상수 (1-2)
@@ -61,7 +64,7 @@ export const elementBySym = Object.fromEntries(ELEMENTS.map((e) => [e.sym, e]));
 
 // 화학식 → 몰질량 (g/mol). 예: 'NH4NO3', 'Ca(OH)2'
 export function molarMass(formula) {
-  const extra = { I: 126.90447, Cu: 63.546, Zn: 65.38, Fe: 55.845, Ag: 107.8682, Ni: 58.6934, Sn: 118.71, Sr: 87.62 };
+  const extra = { I: 126.90447, Cu: 63.546, Zn: 65.38, Fe: 55.845, Ag: 107.8682, Ni: 58.6934, Sn: 118.71, Sr: 87.62, Au: 196.966569 };
   const mass = (s) => elementBySym[s]?.mass ?? extra[s];
   const parse = (str) => {
     let total = 0;
@@ -192,6 +195,39 @@ export const SOLUTES = [
   { id: 'NaHCO3', ko: '탄산수소 나트륨', formula: 'NaHCO3', label: 'NaHCO₃', hydrate: 0, density: 2.20, sol: 10.3 },
   { id: 'KI', ko: '아이오딘화 칼륨', formula: 'KI', label: 'KI', hydrate: 0, density: 3.12, sol: 148 },
 ];
+
+// ── 물질 1 mol 의 부피 비교
+// 고체 밀도 (g/cm³, 실온): 원소 4-44~4-88, 설탕 3-490 (17 °C)
+// 액체 밀도: 에탄올 20 °C (3-246), 아세톤 25 °C (3-4), 부피 팽창 계수 αV (20 °C, 6-157)
+// 녹는점·끓는점 (°C, 1 atm): 3-4, 3-246 / 반데르발스 a (bar L² mol⁻²), b (L mol⁻¹): 6-56
+export const MOLE_SUBSTANCES = [
+  { id: 'Cu', ko: '구리', formula: 'Cu', kind: 'solid', density: 8.96, src: '4-61', color: '#c47a45' },
+  { id: 'Fe', ko: '철', formula: 'Fe', kind: 'solid', density: 7.87, src: '4-68', color: '#7d848e' },
+  { id: 'Al', ko: '알루미늄', formula: 'Al', kind: 'solid', density: 2.70, src: '4-44', color: '#c3cad3' },
+  { id: 'Mg', ko: '마그네슘', formula: 'Mg', kind: 'solid', density: 1.74, src: '4-73', color: '#d6d9de' },
+  { id: 'Ag', ko: '은', formula: 'Ag', kind: 'solid', density: 10.5, src: '4-88', color: '#e1e4e8' },
+  { id: 'Au', ko: '금', formula: 'Au', kind: 'solid', density: 19.3, src: '4-65', color: '#e0b23a' },
+  { id: 'sucrose', ko: '설탕(수크로스)', formula: 'C12H22O11', kind: 'solid', density: 1.5805, src: '3-490', color: '#f3efe4' },
+  { id: 'H2O', ko: '물', formula: 'H2O', kind: 'liquid', water: true, mp: 0, a: 5.537, b: 0.0305, color: '#4aa3df' },
+  { id: 'ethanol', ko: '에탄올', formula: 'C2H5OH', kind: 'liquid', density: 0.7893, tRef: 20, alpha: 1.40e-3, mp: -114.14, t10: 29.2, t100: 78.0, a: 12.56, b: 0.0871, color: '#8fd3c7' },
+  { id: 'acetone', ko: '아세톤', formula: 'CH3COCH3', kind: 'liquid', density: 0.7845, tRef: 25, alpha: 1.46e-3, mp: -94.9, t10: 1.3, t100: 55.7, a: 16.02, b: 0.1124, color: '#b9c8f0' },
+  { id: 'H2', ko: '수소', formula: 'H2', kind: 'gas', a: 0.2452, b: 0.0265, color: '#9b9b9b' },
+  { id: 'He', ko: '헬륨', formula: 'He', kind: 'gas', a: 0.0346, b: 0.0238, color: '#f2c94c' },
+  { id: 'N2', ko: '질소', formula: 'N2', kind: 'gas', a: 1.370, b: 0.0387, color: '#2f80ed' },
+  { id: 'O2', ko: '산소', formula: 'O2', kind: 'gas', a: 1.382, b: 0.0319, color: '#27ae60' },
+  { id: 'CO2', ko: '이산화 탄소', formula: 'CO2', kind: 'gas', a: 3.658, b: 0.0429, color: '#555' },
+  { id: 'CH4', ko: '메테인', formula: 'CH4', kind: 'gas', a: 2.303, b: 0.0431, color: '#eb5757' },
+];
+// 물(액체) 밀도 (°C, g/cm³): 0.1 MPa 0.01~90 °C, 100 °C 이상은 포화 액체 (6-1~6-2)
+export const WATER_DENSITY = [
+  [0.01, 0.99984], [10, 0.99970], [20, 0.99821], [25, 0.99705], [30, 0.99565], [40, 0.99222],
+  [50, 0.98803], [60, 0.98320], [70, 0.97776], [80, 0.97179], [90, 0.96531], [100, 0.95835],
+  [120, 0.94311], [140, 0.92613],
+];
+// 얼음 Ih 밀도 (°C, g/cm³) (6-12)
+export const ICE_DENSITY = [[-50, 0.9235], [-40, 0.9222], [-30, 0.9209], [-20, 0.9196], [-10, 0.9182], [0, 0.9167]];
+// 물의 포화 증기압: WATER_VP 에 120 °C 이상 값 추가 (6-5) — 2 atm 까지의 끓는점을 구하려고
+export const WATER_VP_EXT = [...WATER_VP, [122, 211.59], [130, 270.28], [140, 361.54]];
 
 // 선형 보간
 export function interp(table, x) {

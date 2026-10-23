@@ -13,6 +13,7 @@ import Colligative from '../simulations/Colligative.jsx';
 import DissolutionHeat from '../simulations/DissolutionHeat.jsx';
 import DynamicEquilibrium from '../simulations/DynamicEquilibrium.jsx';
 import Equilibrium from '../simulations/Equilibrium.jsx';
+import MolarVolume from '../simulations/MolarVolume.jsx';
 import Molarity from '../simulations/Molarity.jsx';
 import AcidPH from '../simulations/AcidPH.jsx';
 import Titration from '../simulations/Titration.jsx';
@@ -128,6 +129,16 @@ export const simulations = [
     standards: ['12화학03-02', '12화학03-03', '12화학03-04'],
     sources: ['thermo', 'constants'],
     component: Equilibrium,
+  },
+  {
+    id: 'molar-volume',
+    title: '물질 1몰의 부피 비교',
+    description: '고체(구리·철·알루미늄 등), 액체(물·에탄올·아세톤), 기체 1 mol 의 질량과 부피를 같은 축척의 정육면체로 비교하고, 온도·압력에 따라 상태와 부피가 어떻게 달라지는지 살펴봅니다.',
+    goals: ['물질 1 mol 의 질량이 몰질량과 같음을 안다', '고체·액체 1 mol 의 부피는 물질마다 다르고, 기체 1 mol 의 부피는 종류와 관계없이 같음을 비교한다', '온도·압력에 따라 기체 1 mol 의 부피가 달라짐을 안다 (0 °C, 1 atm 에서 22.4 L)'],
+    places: ['chem-1-2'],
+    standards: ['12화학01-02'],
+    sources: ['atomicWeights', 'elements', 'organic', 'waterProps', 'waterVP', 'ice', 'liquidExp', 'vp', 'vdw', 'constants'],
+    component: MolarVolume,
   },
   {
     id: 'molarity',
