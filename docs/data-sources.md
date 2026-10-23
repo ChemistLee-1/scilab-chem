@@ -24,12 +24,14 @@
 | Electrochemical Series, Table 1 | 5-80 | 표준 환원 전위 |
 | Dissociation Constants of Inorganic / Organic Acids | 5-92 / 5-94~5-99 | pKa |
 | Enthalpy of Solution of Electrolytes | 5-111 | 용해 엔탈피 (무한 희석) |
-| Thermophysical Properties of Water and Steam | 6-2 | 물 비열 4.1806 J/g·K (300 K) |
+| Thermophysical Properties of Water and Steam | 6-1~6-2 | 물 비열 4.1806 J/g·K (300 K), 물 밀도 (1몰의 부피) |
 | Vapor Pressure and Other Saturation Properties of Water | 6-5 | 물 증기압 (증기 압력, 동적 평형) |
-| Van der Waals Constants for Gases | 6-56 | a, b |
+| Van der Waals Constants for Gases | 6-56 | a, b (기체, 물·에탄올·아세톤 증기) |
+| Properties of Ice and Supercooled Water | 6-12 | 얼음 밀도 (1몰의 부피) |
+| Compressibility and Expansion Coefficients of Liquids | 6-157 | 에탄올·아세톤 부피 팽창 계수 |
 | Vapor Pressure | 6-88~6-100 | 유기 용매 (10 kPa, 100 kPa 온도) |
 | Physical Constants of Organic Compounds | 3-4~3-246 | 용매 녹는점·끓는점 |
-| Physical Constants of Inorganic Compounds | 4-83, 4-90 | KI·NaOH·NaHCO₃ 고체 밀도와 25 °C 용해도 (몰 농도) |
+| Physical Constants of Inorganic Compounds | 4-44~4-90 | KI·NaOH·NaHCO₃ 고체 밀도와 25 °C 용해도 (몰 농도), 금속 원소 밀도 (1몰의 부피) |
 | Indicators for Acids and Bases | 8-84 | 지시약 변색 범위 |
 | Atomic Radii of the Elements | 9-49~9-50 | 공유 반지름 |
 | Electronegativity | 9-97 | Pauling 전기음성도 |
