@@ -56,41 +56,117 @@ function molarState(s, t, P) {
 const fmtVol = (mL) => (mL >= 1000 ? `${(mL / 1000).toFixed(mL >= 10000 ? 1 : 2)} L` : `${mL.toFixed(mL >= 100 ? 0 : 1)} mL`);
 const niceStep = (x) => [0.5, 1, 2, 5, 10, 20, 50].find((v) => v >= x) ?? 50;
 
-// 정육면체 한 개 (정면 + 윗면 + 옆면). x: 정면 왼쪽 아래, s: 한 변 (px)
-function Cube({ x, y, s, color, state, dots }) {
+// ── 그림 부품. 모두 (cx, y) = 바닥 가운데, k = 1 cm 당 px
+
+// 흔히 쓰는 비커 (용량 mL, 바깥 지름·높이 cm) — 실측이 아닌 가정, 유리 두께 1 mm
+const BEAKERS = [
+  { cap: 25, od: 3.4, h: 5.0 }, { cap: 50, od: 4.2, h: 6.0 }, { cap: 100, od: 5.0, h: 7.0 },
+  { cap: 250, od: 7.0, h: 9.5 }, { cap: 400, od: 8.0, h: 11.0 }, { cap: 600, od: 9.0, h: 12.5 }, { cap: 1000, od: 10.5, h: 14.5 },
+];
+const GLASS = 0.1; // cm
+const pickBeaker = (mL) => BEAKERS.find((b) => b.cap >= mL * 1.2) ?? BEAKERS[BEAKERS.length - 1];
+const innerArea = (b) => Math.PI * ((b.od - 2 * GLASS) / 2) ** 2; // cm²
+
+// 풍선: 부피가 같은 구를 세로로 15 % 늘인 타원체로 그림 (부피는 그대로)
+const STRETCH = 1.15;
+const balloonDims = (mL) => {
+  const r = Math.cbrt((3 * mL) / (4 * Math.PI)); // 같은 부피 구의 반지름 (cm)
+  const rx = r / Math.cbrt(STRETCH);
+  return { r, rx, ry: rx * STRETCH, knot: r * 0.08, string: r * 0.5 };
+};
+
+// 그림이 차지하는 너비·높이 (cm)
+function extentCm(r) {
+  if (r.state === 'solid') { const c = Math.cbrt(r.mL); return { w: c * 1.35, h: c * 1.25 }; }
+  if (r.state === 'liquid') { const b = pickBeaker(r.mL); return { w: b.od * 1.1, h: b.h }; }
+  const d = balloonDims(r.mL);
+  return { w: 2 * d.rx, h: 2 * d.ry + d.knot + d.string };
+}
+
+// 고체: 정육면체 (정면 + 윗면 + 옆면)
+function Cube({ cx, y, k, mL, color }) {
+  const s = Math.cbrt(mL) * k;
+  const x = cx - (s * 1.35) / 2;
   const dx = s * 0.35, dy = s * 0.25;
-  const gas = state === 'gas';
-  const face = { stroke: gas ? color : '#334', strokeWidth: gas ? 1.5 : 1, strokeDasharray: gas ? '6 4' : undefined };
+  const face = { stroke: '#334', strokeWidth: 1 };
   return (
     <g>
-      <polygon points={`${x},${y - s} ${x + dx},${y - s - dy} ${x + s + dx},${y - s - dy} ${x + s},${y - s}`}
-        fill={color} fillOpacity={gas ? 0.08 : 0.75} {...face} />
-      <polygon points={`${x + s},${y} ${x + s + dx},${y - dy} ${x + s + dx},${y - s - dy} ${x + s},${y - s}`}
-        fill={color} fillOpacity={gas ? 0.12 : 1} {...face} />
-      <rect x={x} y={y - s} width={s} height={s} fill={color} fillOpacity={gas ? 0.1 : state === 'liquid' ? 0.6 : 0.9} {...face} />
-      {state === 'liquid' && s > 14 && <path d={`M${x} ${y - s + s * 0.06} q ${s / 4} ${-s * 0.05} ${s / 2} 0 t ${s / 2} 0`} fill="none" stroke="#fff" strokeOpacity="0.7" />}
-      {state === 'solid' && s > 24 && Array.from({ length: 3 }, (_, i) => (
+      <polygon points={`${x},${y - s} ${x + dx},${y - s - dy} ${x + s + dx},${y - s - dy} ${x + s},${y - s}`} fill={color} fillOpacity="0.75" {...face} />
+      <polygon points={`${x + s},${y} ${x + s + dx},${y - dy} ${x + s + dx},${y - s - dy} ${x + s},${y - s}`} fill={color} {...face} />
+      <rect x={x} y={y - s} width={s} height={s} fill={color} fillOpacity="0.9" {...face} />
+      {s > 24 && Array.from({ length: 3 }, (_, i) => (
         <g key={i} stroke="#fff" strokeOpacity="0.35">
           <line x1={x + (s * (i + 1)) / 4} y1={y - s} x2={x + (s * (i + 1)) / 4} y2={y} />
           <line x1={x} y1={y - (s * (i + 1)) / 4} x2={x + s} y2={y - (s * (i + 1)) / 4} />
         </g>
       ))}
-      {gas && dots && dots.map((d, i) => (
-        <circle key={i} cx={x + 4 + d.u * (s - 8)} cy={y - s + 4 + d.v * (s - 8)} r="3" fill={color} />
+    </g>
+  );
+}
+
+// 액체: 비커에 담긴 모습 (액체 높이 = 부피 ÷ 비커 안쪽 바닥 넓이)
+function Beaker({ cx, y, k, mL, color }) {
+  const b = pickBeaker(mL);
+  const w = b.od * k, h = b.h * k, g = Math.max(GLASS * k, 1);
+  const x0 = cx - w / 2, x1 = cx + w / 2, rr = Math.min(w * 0.08, 6);
+  const lh = (mL / innerArea(b)) * k; // 액체 높이 (px)
+  const lip = w * 0.08;
+  const marks = [0.2, 0.4, 0.6, 0.8, 1].map((f) => (b.cap * f / innerArea(b)) * k);
+  return (
+    <g>
+      <rect x={x0 + g} y={y - g - lh} width={w - 2 * g} height={lh} fill={color} fillOpacity="0.55" />
+      <line x1={x0 + g} x2={x1 - g} y1={y - g - lh} y2={y - g - lh} stroke={color} strokeWidth={Math.max(1, k * 0.05)} />
+      <path d={`M${x0 - lip} ${y - h} L${x0} ${y - h + lip * 0.6} L${x0} ${y - rr} Q${x0} ${y} ${x0 + rr} ${y} L${x1 - rr} ${y} Q${x1} ${y} ${x1} ${y - rr} L${x1} ${y - h}`}
+        fill="none" stroke="#556" strokeWidth={Math.max(1, g)} strokeLinejoin="round" />
+      {h > 40 && marks.map((m, i) => (
+        <line key={i} x1={x0 + w * 0.12} x2={x0 + w * (i === 4 ? 0.34 : 0.24)} y1={y - g - m} y2={y - g - m} stroke="#556" strokeWidth="1" />
       ))}
     </g>
   );
 }
 
+// 기체: 풍선 (구와 부피가 같은 타원체) + 매듭 + 줄
+function Balloon({ cx, y, k, mL, color, dots }) {
+  const d = balloonDims(mL);
+  const rx = d.rx * k, ry = d.ry * k, knot = Math.max(d.knot * k, 3), str = d.string * k;
+  const cyB = y - str - knot - ry;
+  return (
+    <g>
+      <path d={`M${cx} ${y - str} q ${-str * 0.12} ${str * 0.35} 0 ${str * 0.5} t 0 ${str * 0.5}`} fill="none" stroke="#778" strokeWidth="1.2" />
+      <polygon points={`${cx},${cyB + ry - 1} ${cx - knot * 0.8},${cyB + ry + knot} ${cx + knot * 0.8},${cyB + ry + knot}`} fill={color} />
+      <ellipse cx={cx} cy={cyB} rx={rx} ry={ry} fill={color} fillOpacity="0.28" stroke={color} strokeWidth="2" />
+      <ellipse cx={cx - rx * 0.4} cy={cyB - ry * 0.45} rx={rx * 0.14} ry={ry * 0.2} fill="#fff" fillOpacity="0.6" transform={`rotate(-25 ${cx - rx * 0.4} ${cyB - ry * 0.45})`} />
+      {dots && dots.map((p, i) => {
+        const v = (2 * p.v - 1) * 0.85;
+        return <circle key={i} cx={cx + (2 * p.u - 1) * rx * 0.85 * Math.sqrt(1 - v * v)} cy={cyB + v * ry} r="3" fill={color} />;
+      })}
+    </g>
+  );
+}
+
+function Item({ r, color, ...rest }) {
+  if (r.state === 'solid') return <Cube {...rest} mL={r.mL} color={color} />;
+  if (r.state === 'liquid') return <Beaker {...rest} mL={r.mL} color={color} />;
+  return <Balloon {...rest} mL={r.mL} color={color} />;
+}
+
+// 아래 글자: 어떤 모습으로 그렸는지
+function shapeLabel(r) {
+  if (r.state === 'solid') return `한 변 ${Math.cbrt(r.mL).toFixed(2)} cm 정육면체`;
+  if (r.state === 'liquid') return `${pickBeaker(r.mL).cap} mL 비커에 담음`;
+  return `풍선 지름 약 ${(2 * balloonDims(r.mL).r).toFixed(0)} cm`;
+}
+
 const W = 720, H = 400, FLOOR = 330;
 const SLOTS = 3;
-const MAX_SIDE_PX = 190; // 가장 큰 정육면체의 한 변 최대 (px)
+const MAX_PX = 200; // 가장 큰 그림의 높이 최대 (px)
 const MIN_SLOT_W = 170; // 칸 하나의 최소 너비 (이름·부피 글자가 들어갈 자리)
 const MAGS = [2, 3, 4, 5, 10, 20, 50];
+const MAG_R = 62; // 확대 동그라미 반지름 (px)
 
 export default function MolarVolume() {
   const [ids, setIds] = useState(['Cu', 'H2O', 'O2']);
-  const [t, setT] = useState(0); // °C
+  const [t, setT] = useState(25); // °C — 상온·상압(25 °C, 1 atm)에서 시작
   const [P, setP] = useState(1); // atm
   const [view, setView] = useState('cube');
   const [, setTick] = useState(0);
@@ -116,12 +192,12 @@ export default function MolarVolume() {
     setTick((x) => (x + 1) % 1e6);
   }, anyGas && view === 'cube');
 
-  // 같은 축척: 가장 큰 정육면체가 MAX_SIDE_PX 가 되도록 (1 cm = k px, 최대 40 px)
-  const sides = res.map((r) => Math.cbrt(r.mL)); // cm
-  const k = Math.min(MAX_SIDE_PX / Math.max(...sides), 40);
+  // 같은 축척: 가장 높은 그림이 MAX_PX 가 되도록 (1 cm = k px, 최대 40 px)
+  const ext = res.map(extentCm); // cm
+  const k = Math.min(MAX_PX / Math.max(...ext.map((e) => e.h)), 40);
   const ruler = niceStep(90 / k); // cm
   // 칸 배치: 정육면체 너비(깊이 포함)에 맞춰 왼쪽부터 놓고 남는 자리를 고르게 나눔
-  const slotW = sides.map((c) => Math.max(c * k * 1.35, MIN_SLOT_W));
+  const slotW = ext.map((e) => Math.max(e.w * k, MIN_SLOT_W));
   const gap = (W - 20 - slotW.reduce((a, b) => a + b, 0)) / (SLOTS + 1);
   const slotX = slotW.map((w, i) => 10 + gap * (i + 1) + slotW.slice(0, i).reduce((a, b) => a + b, 0) + w / 2);
 
@@ -135,34 +211,34 @@ export default function MolarVolume() {
   const small = order[0], big = order[2];
   const gasIdx = res.map((r, i) => i).filter((i) => res[i].state === 'gas');
 
-  const cubeView = (
+  const sceneView = (
     <svg viewBox={`0 0 ${W} ${H}`} role="img">
       <rect x="0" y="0" width={W} height={H} fill="#f7f9fc" rx="8" />
       <line x1="10" x2={W - 10} y1={FLOOR} y2={FLOOR} stroke="#99a" strokeWidth="2" />
       {res.map((r, i) => {
-        const s = sides[i] * k;
         const cx = slotX[i];
-        const x = cx - (s * 1.35) / 2;
         const sub = subs[i];
-        const tiny = s < 28;
-        const mag = tiny ? [...MAGS].reverse().find((m) => s * m <= 60) ?? 2 : 1;
+        const color = sub.water && r.state === 'solid' ? '#cfe8f7' : sub.color;
+        const size = Math.max(ext[i].w, ext[i].h) * k; // px
+        const tiny = size < 40;
+        const mag = tiny ? [...MAGS].reverse().find((m) => size * m <= MAG_R * 1.5) ?? 2 : 1;
+        const cyM = FLOOR - 160; // 확대 동그라미 중심
         return (
           <g key={i}>
-            <Cube x={x} y={FLOOR} s={s} color={sub.water && r.state === 'solid' ? '#cfe8f7' : sub.color} state={r.state} dots={dotsRef.current[i]} />
+            <Item r={r} color={color} cx={cx} y={FLOOR} k={k} dots={dotsRef.current[i]} />
             {tiny && (
               <g>
-                <line x1={cx} y1={FLOOR - s - 4} x2={cx} y2={FLOOR - 84} stroke="#99a" strokeDasharray="3 3" />
-                <circle cx={cx} cy={FLOOR - 140} r="56" fill="#fff" stroke="#99a" />
-                <Cube x={cx - (s * mag * 1.35) / 2} y={FLOOR - 140 + s * mag * 0.375} s={s * mag}
-                  color={sub.water && r.state === 'solid' ? '#cfe8f7' : sub.color} state={r.state} />
-                <text x={cx} y={FLOOR - 204} textAnchor="middle" className="tick">×{mag} 확대</text>
+                <line x1={cx} y1={FLOOR - ext[i].h * k - 4} x2={cx} y2={cyM + MAG_R} stroke="#99a" strokeDasharray="3 3" />
+                <circle cx={cx} cy={cyM} r={MAG_R} fill="#fff" stroke="#99a" />
+                <Item r={r} color={color} cx={cx} y={cyM + (ext[i].h * k * mag) / 2} k={k * mag} />
+                <text x={cx} y={cyM - MAG_R - 8} textAnchor="middle" className="tick">×{mag} 확대</text>
               </g>
             )}
             <text x={cx} y={FLOOR + 22} textAnchor="middle" fontSize="15" fontWeight="700">{sub.ko} {subscript(sub.formula)}</text>
-            <text x={cx} y={FLOOR + 42} textAnchor="middle" fontSize="13" fill={STATE_COLOR[r.state]}>
-              {STATE_KO[r.state]} · 1 mol = {r.M.toFixed(2)} g
+            <text x={cx} y={FLOOR + 40} textAnchor="middle" fontSize="12" fill={STATE_COLOR[r.state]}>
+              {STATE_KO[r.state]} · {shapeLabel(r)}
             </text>
-            <text x={cx} y={FLOOR + 62} textAnchor="middle" fontSize="16" fontWeight="700">V = {fmtVol(r.mL)}</text>
+            <text x={cx} y={FLOOR + 60} textAnchor="middle" fontSize="16" fontWeight="700">{r.M.toFixed(2)} g = {fmtVol(r.mL)}</text>
           </g>
         );
       })}
@@ -172,7 +248,7 @@ export default function MolarVolume() {
         <line x1={ruler * k} x2={ruler * k} y1="-5" y2="5" stroke="#334" strokeWidth="2" />
         <text x={(ruler * k) / 2} y="18" textAnchor="middle" className="tick">{ruler} cm</text>
       </g>
-      <text x="16" y="26" className="tick">1 mol 이 차지하는 공간을 정육면체로 (세 물질 같은 축척)</text>
+      <text x="16" y="26" className="tick">{t} °C, {P.toFixed(2)} atm 에서 1 mol 의 모습 (세 물질 같은 축척)</text>
     </svg>
   );
 
@@ -204,10 +280,10 @@ export default function MolarVolume() {
     <SimLayout
       canvas={<>
         <Segmented value={view} onChange={setView} options={[
-          { value: 'cube', label: '정육면체 (같은 축척)' },
+          { value: 'cube', label: '실제 모습 (같은 축척)' },
           { value: 'bar', label: '막대 그래프 (로그 눈금)' },
         ]} />
-        <div style={{ marginTop: 8 }}>{view === 'cube' ? cubeView : barView}</div>
+        <div style={{ marginTop: 8 }}>{view === 'cube' ? sceneView : barView}</div>
         <div className="data-table-wrap" style={{ maxHeight: 'none' }}>
           <table className="data-table">
             <thead>
@@ -234,8 +310,8 @@ export default function MolarVolume() {
           format={(v) => `${v} °C (${(v + 273.15).toFixed(2)} K)`} />
         <Slider label="압력" value={P} min={0.5} max={2} step={0.05} unit=" atm" format={(v) => v.toFixed(2)} onChange={setP} />
         <div className="segmented">
-          <button onClick={() => { setT(0); setP(1); }}>0 °C, 1 atm</button>
-          <button onClick={() => { setT(25); setP(1); }}>25 °C, 1 atm</button>
+          <button className={t === 25 && P === 1 ? 'on' : ''} onClick={() => { setT(25); setP(1); }}>상온·상압 (25 °C, 1 atm)</button>
+          <button className={t === 0 && P === 1 ? 'on' : ''} onClick={() => { setT(0); setP(1); }}>0 °C, 1 atm</button>
         </div>
         <div className="readout">
           <p style={{ margin: 0 }}>
@@ -254,7 +330,10 @@ export default function MolarVolume() {
         </div>
       </>}
       footer={<ScaleNote items={[
-        `정육면체 한 변 = (1 mol 부피)^⅓, 세 물질 모두 같은 축척 (지금 1 cm = ${k.toFixed(1)} px). 작은 정육면체는 동그라미 안에 확대해서 함께 그림`,
+        `세 물질 모두 같은 축척 (지금 1 cm = ${k.toFixed(1)} px). 작은 그림은 동그라미 안에 확대해서 함께 그림`,
+        '고체: 1 mol 을 정육면체로 (한 변 = (부피)^⅓)',
+        '액체: 부피의 1.2 배 이상 담기는 가장 작은 비커에 담음. 비커 치수(바깥 지름 × 높이)는 25 mL 3.4 × 5.0 cm, 50 mL 4.2 × 6.0 cm, 100 mL 5.0 × 7.0 cm, 250 mL 7.0 × 9.5 cm 로 가정 (유리 두께 1 mm), 액체 높이 = 부피 ÷ 안쪽 바닥 넓이',
+        '기체: 1 mol 을 담은 풍선 — 부피가 같은 구를 세로로 15 % 늘인 모양. 풍선 고무가 누르는 압력은 무시 (풍선 속 압력 = 바깥 압력)',
         '기체 부피는 이상 기체 V = RT/P 로 계산 (표에는 반데르발스 식으로 구한 실제 기체 부피도 표시, 상수 a·b 는 CRC 6-56)',
         '고체 밀도는 실온 값으로 고정 (금속의 부피 팽창은 −50~200 °C 에서 1 % 미만이라 무시)',
         '물: 0 °C 미만은 얼음(6-12), 액체 밀도는 6-1~6-2, 끓는점은 포화 증기압(6-5)으로 구함. 압력에 따른 녹는점 변화는 무시',
