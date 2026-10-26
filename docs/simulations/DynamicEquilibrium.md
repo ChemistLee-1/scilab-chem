@@ -27,3 +27,4 @@
 
 ## 수정 이력
 - 2026-10-02 PR #4: 첫 버전 (사용자 제공 증발·응축 HTML → CRC 포화 증기압 기준, 상댓값 그래프, 사이트 디자인)
+- 2026-10-26: GitHub Pages 사이트(`ChemistLee-1/Dynamic-Equilibrium`)에 `evaporation.html`로 독립 HTML 복사본 추가 (갈색 평형 페이지 디자인). 이 시뮬레이션의 계산·수치를 바꾸면 그 파일도 함께 고칠 것
